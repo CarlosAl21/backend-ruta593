@@ -1,99 +1,182 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Sistema de Reserva de Buses
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este proyecto es un sistema de reserva de pasajes de bus desarrollado con NestJS. El sistema permite a los usuarios realizar reservas de asientos y gestionar pagos para una cooperativa de transporte específica.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Características Principales 
 
-## Description
+- Autenticación de usuarios
+- Gestión de usuarios
+- Gestión de buses, frecuencias, rutas y paradas
+- Reserva de asientos
+- Sistema de pagos con múltiples métodos (PayPal, Depósito, Presencial)
+- Carga de imagenes de buses, y comprobantes de pago
+- Generación de boletos y facturas, ademas de códigos QR
+- Envio de emails de reserva y cancelación
+- Documentación API con Swagger
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Pre-requisitos 
 
-## Project setup
+- Node.js (v20 o superior)
+- NestJS
+- MySQL
+- pnpm
 
-```bash
-$ npm install
+### Instalación de pnpm
+
+Si no tienes pnpm instalado, puedes instalarlo de las siguientes maneras:
+
+1. Usando npm:
+bash
+npm install -g pnpm
+
+
+2. Usando Windows PowerShell:
+bash
+iwr https://get.pnpm.io/install.ps1 -useb | iex
+
+
+3. Verificar la instalación:
+bash
+pnpm --version
+
+
+## Instalación 
+
+1. Clona el repositorio:
+bash
+git clone <https://github.com/ArielTonato/buses-back>
+
+
+2. Instala las dependencias:
+bash
+pnpm install
+
+
+3. Configura las variables de entorno:
+Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+
+```properties
+# Database Configuration
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=tu_contraseña
+MYSQL_DATABASE=bd_buses
+
+# JWT Configuration
+JWT_SECRET=tu_clave_secreta_jwt
+
+# Mail Configuration
+MAIL_HOST=smtp.gmail.com
+MAIL_USER=tu_email@gmail.com
+MAIL_PASSWORD=tu_app_password
+MAIL_FROM=tu_email@gmail.com
+
+# Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME=tu_cloud_name
+CLOUDINARY_API_KEY=tu_api_key
+CLOUDINARY_API_SECRET=tu_api_secret
 ```
 
-## Compile and run the project
+> **Nota**: Asegúrate de reemplazar los valores con tus propias credenciales.
 
-```bash
-# development
-$ npm run start
+4. Inicia el servidor de desarrollo:
+bash
+pnpm run start:dev
 
-# watch mode
-$ npm run start:dev
 
-# production mode
-$ npm run start:prod
+## Estructura del Proyecto 
+```
+src/
+│
+├── auth/             # Módulo de gestión de autenticación
+├── boletos/          # Módulo de gestión de boletos
+├── buses/            # Módulo de gestión de buses
+├── cloudinary/       # Módulo de gestión para la carga de imágenes y PDFs
+├── cooperativa/      # Módulo de configuración de la cooperativa
+├── factura/          # Módulo de facturación
+├── frecuencias/      # Módulo de gestión de frecuencias
+├── reserva/          # Módulo de reservas
+├── mail/             # Módulo de envío de emails
+├── user/             # Módulo de usuarios
+├── common/           # Utilidades compartidas
+└── app.module.ts     # Módulo principal de la aplicación
 ```
 
-## Run tests
+## Documentación API 
 
-```bash
-# unit tests
-$ npm run test
+La documentación de la API está disponible en Swagger. Para acceder:
 
-# e2e tests
-$ npm run test:e2e
+1. Inicia el servidor
+2. Visita http://localhost:3000/api/docs o el puerto correspondiente en tu servidor
 
-# test coverage
-$ npm run test:cov
-```
+## Endpoints Principales 
 
-## Deployment
+Revisar la documentación de Swagger para obtener detalles completos de los endpoints.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- POST /reserva - Crear una nueva reserva
+- GET /boletos - Listar todos los boletos
+- GET /factura - Obtener las facturas
+- GET /cooperativa - Listar cooperativa
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Módulos Principales 
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+### Módulo de Reservas
+- Gestión de reservas de asientos
+- Estado de reservas (pendiente, confirmada, cancelada)
+- Asignación de asientos
+- Escoger destino
+- Escoger metodo de pago
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Módulo de Boletos
+- Generación de boletos
+- Códigos QR
+- Validación de boletos
 
-## Resources
+### Módulo de Facturas
+- Generación automática de facturas
+- Historial de facturas
 
-Check out a few resources that may come in handy when working with NestJS:
+### Módulo de Frecuencias
+- Gestión de frecuencias
+- Asignación de buses a frecuencias
+- Asignación de conductores a frecuencias
+- Asignación de horarios a frecuencias
+- Asignación de origen y destino a frecuencias
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Pruebas 
 
-## Support
+Para ejecutar las pruebas:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Las pruebas se realizaron Rest Client y Postman, para ver los tests revisar la carpeta tests
 
-## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Tecnologías Utilizadas 
 
-## License
+- [Node.js](https://nodejs.org/) - Entorno de ejecución
+- [NestJS](https://nestjs.com/) - Framework de backend
+- [MySQL](https://www.mysql.com/) - Base de datos
+- [TypeORM](https://typeorm.io/) - ORM
+- [Swagger](https://swagger.io/) - Documentación API
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Autores 
+
+* *Ariel Tonato* - Desarrollo - [ArielTonato](https://github.com/ArielTonato)
+
+## Licencia 📄
+
+Este proyecto es software libre y de código abierto, distribuido bajo la Licencia MIT. Esto significa que puedes:
+
+- ✔️ Usar el código para proyectos comerciales
+- ✔️ Modificar el código según tus necesidades
+- ✔️ Distribuir el código modificado
+- ✔️ Uso privado sin restricciones
+
+La única condición es mantener el aviso de copyright y la licencia en todas las copias o partes sustanciales del software.
+
+Para más detalles, consulta el archivo [LICENSE](LICENSE) en el repositorio.
+
+## Agradecimientos 
+
+* Universidad Técnica de Ambato
+* Docente del proyecto
