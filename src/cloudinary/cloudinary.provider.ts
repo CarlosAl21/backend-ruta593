@@ -5,9 +5,9 @@ export const CloudinaryProvider = {
     useFactory: () =>{
         return cloudinary.config(
             {
-                cloud_name: 'aridev21',
-                api_key: '827353881855768',
-                api_secret: 'uuBHm1UrXLwjSN_MDE1JjqrBml8'
+                cloud_name: 'g4to',
+                api_key: '635562132924635',
+                api_secret: 'r31WQh8N5_2OV3D54ria-l_AKeo'
             }
         )
     }
