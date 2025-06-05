@@ -18,6 +18,7 @@ import { CooperativaModule } from './cooperativa/cooperativa.module';
 import { FacturaModule } from './factura/factura.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ViajesModule } from './viajes/viajes.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { AppService } from './app.service';
     MailModule,
     CooperativaModule,
     FacturaModule,
+    ViajesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
