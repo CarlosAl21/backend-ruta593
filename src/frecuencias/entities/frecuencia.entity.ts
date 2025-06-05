@@ -3,6 +3,7 @@ import { Bus } from '../../buses/entities/bus.entity';
 import { User } from '../../user/entities/user.entity';
 import { Ruta } from '../../rutas/entities/ruta.entity';
 import { Reserva } from 'src/reserva/entities/reserva.entity';
+import { Viaje } from 'src/viajes/entities/viaje.entity';
 
 @Entity('frecuencias')
 export class Frecuencia {
@@ -62,4 +63,7 @@ export class Frecuencia {
 
   @CreateDateColumn()
   fecha_creacion: Date;
+
+  @OneToMany(() => Viaje, viaje => viaje.id_frecuencia)
+  viajes: Viaje[];
 }
