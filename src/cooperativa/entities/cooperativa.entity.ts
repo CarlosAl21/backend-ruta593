@@ -5,10 +5,10 @@ import { ApiProperty } from "@nestjs/swagger";
 export class Cooperativa {
     @ApiProperty({
         description: 'ID único de la cooperativa',
-        example: 1
+        example: 'uuid-string'
     })
-    @PrimaryGeneratedColumn()
-    cooperativa_id: number;
+    @PrimaryGeneratedColumn('uuid')
+    cooperativa_uid: string;
 
     @ApiProperty({
         description: 'Nombre de la cooperativa de transporte',

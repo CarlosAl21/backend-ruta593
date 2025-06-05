@@ -3,8 +3,8 @@ import { Bus } from "src/buses/entities/bus.entity";
 
 @Entity()
 export class BusesFoto {
-    @PrimaryGeneratedColumn()
-    foto_id: number;
+    @PrimaryGeneratedColumn('uuid')
+    foto_uid: string;
 
     @Column()
     url: string;
@@ -13,9 +13,9 @@ export class BusesFoto {
     public_id: string;
 
     @ManyToOne(() => Bus, bus => bus.fotos, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'bus_id' })
+    @JoinColumn({ name: 'bus_uid' })
     bus: Bus;
 
     @Column()
-    bus_id: number;
+    bus_uid: string;
 }
