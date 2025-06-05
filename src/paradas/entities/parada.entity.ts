@@ -3,8 +3,8 @@ import { Ruta } from '../../rutas/entities/ruta.entity';
 
 @Entity('paradas')
 export class Parada {
-  @PrimaryGeneratedColumn()
-  parada_id: number;
+  @PrimaryGeneratedColumn('uuid')
+  parada_uid: string;
 
   @Column()
   ciudad: string;

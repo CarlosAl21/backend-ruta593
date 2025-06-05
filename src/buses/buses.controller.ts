@@ -56,17 +56,17 @@ export class BusesController {
     return this.busesService.findAll();
   }
 
-  @ApiOperation({ summary: 'Obtener un bus por ID' })
-  @ApiParam({ name: 'id', description: 'ID del bus' })
+  @ApiOperation({ summary: 'Obtener un bus por UID' })
+  @ApiParam({ name: 'uid', description: 'UID del bus' })
   @ApiResponse({ 
     status: 200, 
     description: 'Bus encontrado',
     type: CreateBusDto
   })
   @ApiResponse({ status: 404, description: 'Bus no encontrado' })
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.busesService.findOne(id);
+  @Get(':uid')
+  findOne(@Param('uid') id: number) {
+    return this.busesService.findOne(uid);
   }
 
   @ApiOperation({ summary: 'Buscar bus por placa' })

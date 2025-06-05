@@ -47,7 +47,7 @@ export class BusesService {
   private async updateAsientos(bus: Bus, newTotalNormales: number, newTotalVip: number) {
     // Obtener todos los asientos actuales del bus
     const asientosActuales = await this.asientoRepository.find({
-      where: { bus: { bus_id: bus.bus_id } },
+      where: { bus: { bus_id: bus.bus_uid } },
       order: { numero_asiento: 'ASC' }
     });
 
@@ -98,7 +98,7 @@ export class BusesService {
 
     // Renumerar todos los asientos para mantener la secuencia
     const todosLosAsientos = await this.asientoRepository.find({
-      where: { bus: { bus_id: bus.bus_id } },
+      where: { bus: { bus_uid: bus.bus_uid } },
       order: { tipo_asiento: 'ASC', numero_asiento: 'ASC' }
     });
 
@@ -130,7 +130,7 @@ export class BusesService {
         this.busesFotoRepository.save({
           url: result.secure_url,
           public_id: result.public_id,
-          bus_id: newBus.bus_id
+          bus_uid: newBus.bus_uid
         })
       );
 
@@ -138,7 +138,7 @@ export class BusesService {
     }
 
     // Retornar el bus con sus fotos
-    return this.findOne(newBus.bus_id);
+    return this.findOne(newBus.bus_uid);
   }
 
   findAll() {
@@ -171,23 +171,23 @@ export class BusesService {
     return bus;
   }
 
-  findOne(id: number) {
+  findOne(uid: string) {
     return this.busRepository.findOne({
-      where: { bus_id: id },
+      where: { bus_uid: uid },
       relations: {
         fotos: true
       }
     });
   }
 
-  async update(id: number, updateBusDto: UpdateBusDto) {
-    const bus = await this.findOne(id);
+  async update(uid: string, updateBusDto: UpdateBusDto) {
+    const bus = await this.findOne(uid);
     if (!bus) {
       throw new ConflictException('El bus no existe');
     }
 
     const busExists = await this.findOneByPlaca(updateBusDto.placa);
-    if (busExists && busExists.bus_id !== id) {
+    if (busExists && busExists.bus_uid !== uid) {
       throw new ConflictException('Ya existe un bus con esa placa');
     }
 

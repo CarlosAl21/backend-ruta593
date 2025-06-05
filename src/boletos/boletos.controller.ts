@@ -3,6 +3,7 @@ import { BoletosService } from './boletos.service';
 import { CreateBoletoDto } from './dto/create-boleto.dto';
 import { UpdateBoletoDto } from './dto/update-boleto.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { UUID } from 'sequelize';
 
 @ApiTags('Boletos')
 @Controller('boletos')
@@ -47,11 +48,11 @@ export class BoletosController {
     return this.boletosService.findAllByUserId(+userId);
   }
 
-  @ApiOperation({ summary: 'Obtener un boleto por ID' })
+  @ApiOperation({ summary: 'Obtener un boleto por UID' })
   @ApiParam({ 
-    name: 'id', 
-    description: 'ID del boleto',
-    type: 'number'
+    name: 'uid', 
+    description: 'UID del boleto',
+    type: 'string'
   })
   @ApiResponse({ 
     status: 200, 
@@ -62,9 +63,9 @@ export class BoletosController {
     status: 404, 
     description: 'Boleto no encontrado'
   })
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.boletosService.findOne(+id);
+  @Get(':uid')
+  findOne(@Param('uid') uid: string) {
+    return this.boletosService.findOne(uid);
   }
 
   @ApiOperation({ summary: 'Obtener boletos por reserva' })
@@ -85,9 +86,9 @@ export class BoletosController {
 
   @ApiOperation({ summary: 'Actualizar un boleto' })
   @ApiParam({ 
-    name: 'id', 
-    description: 'ID del boleto a actualizar',
-    type: 'number'
+    name: 'uid', 
+    description: 'UID del boleto a actualizar',
+    type: 'string'
   })
   @ApiResponse({ 
     status: 200, 
@@ -98,16 +99,16 @@ export class BoletosController {
     status: 404, 
     description: 'Boleto no encontrado'
   })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBoletoDto: UpdateBoletoDto) {
-    return this.boletosService.update(+id, updateBoletoDto);
+  @Patch(':uid')
+  update(@Param('uid') uid: string, @Body() updateBoletoDto: UpdateBoletoDto) {
+    return this.boletosService.update(uid, updateBoletoDto);
   }
 
   @ApiOperation({ summary: 'Eliminar un boleto' })
   @ApiParam({ 
-    name: 'id', 
-    description: 'ID del boleto a eliminar',
-    type: 'number'
+    name: 'uid', 
+    description: 'UID del boleto a eliminar',
+    type: 'string'
   })
   @ApiResponse({ 
     status: 200, 
@@ -117,8 +118,8 @@ export class BoletosController {
     status: 404, 
     description: 'Boleto no encontrado'
   })
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.boletosService.remove(+id);
+  @Delete(':uid')
+  remove(@Param('uid') uid: string) {
+    return this.boletosService.remove(uid);
   }
 }
