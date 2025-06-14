@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Viaje } from './entities/viaje.entity';
 import { Repository } from 'typeorm';
 import { Frecuencia } from 'src/frecuencias/entities/frecuencia.entity';
+import { Reserva } from 'src/reserva/entities/reserva.entity';
+import { EstadoReserva } from 'src/common/enums/reserva.enum';
 
 @Injectable()
 export class ViajesService {
@@ -13,6 +15,8 @@ export class ViajesService {
     private readonly viajeRepository: Repository<Viaje>,
     @InjectRepository(Frecuencia)
     private readonly frecuenciaRepository: Repository<Frecuencia>,
+    @InjectRepository(Reserva)
+    private readonly reservaRepository: Repository<Reserva>,
   ) {}
 
   async create(createViajeDto: CreateViajeDto) {
@@ -100,6 +104,59 @@ export class ViajesService {
     } catch (error) {
       console.error('Error finding viajes by date:', error);
       throw new InternalServerErrorException('Error buscando viajes por fecha');
+    }
+  }
+
+  async actualizarAsientosOcupados(viajeId: string) {
+    // Busca el viaje
+    const viaje = await this.viajeRepository.findOne({ where: { id_viaje: viajeId }, relations: ['frecuencia'] });
+    if (!viaje) throw new NotFoundException('Viaje no encontrado');
+
+    // Cuenta reservas confirmadas para la frecuencia y fecha del viaje
+    const asientosOcupados = await this.reservaRepository.count({
+      where: {
+        frecuencia_id: viaje.id_frecuencia.frecuencia_id,
+        fecha_viaje: viaje.fecha_salida,
+        estado: EstadoReserva.CONFIRMADA
+      }
+    });
+
+    viaje.num_asientos_ocupados = asientosOcupados;
+    await this.viajeRepository.save(viaje);
+  }
+
+  async finalizarViaje(viajeId: string) {
+    // Buscar el viaje
+    const viaje = await this.viajeRepository.findOne({
+      where: { id_viaje: viajeId },
+      relations: ['id_frecuencia'],
+    });
+    if (!viaje) throw new NotFoundException('Viaje no encontrado');
+
+    // Cambiar estado del viaje a TERMINADO (debes tener un campo estado en Viaje)
+    viaje.estado = 'TERMINADO'; // Asegúrate que este campo exista en la entidad Viaje
+
+    // Limpiar asientos ocupados
+    viaje.num_asientos_ocupados = 0;
+    await this.viajeRepository.save(viaje);
+
+    // Cambiar estado de reservas confirmadas a FINALIZADA
+    const reservas = await this.reservaRepository.find({
+      where: {
+        frecuencia_id: viaje.id_frecuencia.frecuencia_id,
+        fecha_viaje: viaje.fecha_salida,
+        estado: EstadoReserva.CONFIRMADA,
+      },
+      relations: ['asiento'],
+    });
+
+    for (const reserva of reservas) {
+      reserva.estado = EstadoReserva.FINALIZADA; // O CANCELADA si prefieres
+      await this.reservaRepository.save(reserva);
+
+      // Si tienes un flag en Asiento para reservado, límpialo aquí
+      // reserva.asiento.reservado = false;
+      // await this.asientoRepository.save(reserva.asiento);
     }
   }
 }

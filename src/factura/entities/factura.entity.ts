@@ -12,14 +12,14 @@ export class Factura {
     example: 'uuid-string'
   })
   @PrimaryGeneratedColumn('uuid')
-  factura_uid: string;
+  factura_id: string;
 
   @ApiProperty({
     description: 'Número de factura único',
     example: 'FACT-001-2025'
   })
   @Column({ unique: true })
-  numeroFactura: string;
+  numero_factura: string;
 
   @ApiProperty({
     description: 'Fecha de emisión de la factura',
@@ -70,7 +70,7 @@ export class Factura {
     example: 1
   })
   @Column()
-  reservaId: number;
+  reservaId: string;
 
   @ApiProperty({
     description: 'Usuario al que se emite la factura',
@@ -85,7 +85,7 @@ export class Factura {
     example: 1
   })
   @Column()
-  usuarioId: number;
+  usuarioId: string;
 
   @ApiProperty({
     description: 'Cooperativa que emite la factura',
@@ -101,7 +101,7 @@ export class Factura {
     default: 1
   })
   @Column({ default: 1 })
-  cooperativaId: number;
+  cooperativaId: string;
 
   @ApiProperty({
     description: 'Boleto asociado a la factura',
@@ -116,5 +116,5 @@ export class Factura {
     example: 1
   })
   @Column()
-  boleto_id: number;
+  boleto_id: string;
 }

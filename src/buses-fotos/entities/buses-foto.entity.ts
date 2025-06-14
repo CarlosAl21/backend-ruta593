@@ -4,7 +4,7 @@ import { Bus } from "src/buses/entities/bus.entity";
 @Entity()
 export class BusesFoto {
     @PrimaryGeneratedColumn('uuid')
-    foto_uid: string;
+    foto_id: string;
 
     @Column()
     url: string;

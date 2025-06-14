@@ -65,7 +65,7 @@ export class BoletosService {
 
   async findOne(uid: string) {
     const boleto = await this.boletoRepository.findOne({
-      where: { boleto_uid: uid },
+      where: { boleto_id: uid },
       relations: ['reservas', 'reservas.asiento']
     });
     if(!boleto){
@@ -94,7 +94,7 @@ export class BoletosService {
 
   async remove(uid: string) {
     const boleto = await this.boletoRepository.findOne({
-      where: { boleto_uid: uid },
+      where: { boleto_id: uid },
       relations: ['reservas', 'reservas.asiento']
     });
 

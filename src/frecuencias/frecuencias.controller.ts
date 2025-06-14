@@ -39,7 +39,7 @@ export class FrecuenciasController {
     type: CreateFrecuenciaDto
   })
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.frecuenciasService.findOne(id);
   }
 
@@ -51,7 +51,7 @@ export class FrecuenciasController {
     type: [CreateFrecuenciaDto]
   })
   @Get('conductor/:id')
-  findByConductor(@Param('id') id: number) {
+  findByConductor(@Param('id') id: string) {
     return this.frecuenciasService.findByConductor(id);
   }
 
@@ -63,7 +63,7 @@ export class FrecuenciasController {
     type: [CreateFrecuenciaDto]
   })
   @Get('bus/:id')
-  findByBus(@Param('id') id: number) {
+  findByBus(@Param('id') id: string) {
     return this.frecuenciasService.findByBus(id);
   }
 
@@ -111,7 +111,7 @@ export class FrecuenciasController {
     type: UpdateFrecuenciaDto
   })
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateFrecuenciaDto: UpdateFrecuenciaDto) {
+  update(@Param('id') id: string, @Body() updateFrecuenciaDto: UpdateFrecuenciaDto) {
     return this.frecuenciasService.update(id, updateFrecuenciaDto);
   }
 
@@ -123,6 +123,6 @@ export class FrecuenciasController {
   })
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.frecuenciasService.remove(+id);
+    return this.frecuenciasService.remove(id);
   }
 }

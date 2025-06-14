@@ -6,7 +6,7 @@ import { Frecuencia } from '../../frecuencias/entities/frecuencia.entity';
 @Entity()
 export class Bus {
     @PrimaryGeneratedColumn('uuid')
-    bus_uid: string;
+    bus_id: string;
 
     @Column()
     numero_bus: number;

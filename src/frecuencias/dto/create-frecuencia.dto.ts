@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { ValidarCadena } from "src/common/decorators/cadenasTexto.decorator";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -14,15 +14,15 @@ export class CreateFrecuenciaDto {
         description: 'ID del bus asignado a la frecuencia',
         example: 1
     })
-    @IsNumber({}, {message: "El id del bus es un número"})
-    bus_id: number
+    @IsNotEmpty({message: "El id del bus es un número"})
+    bus_id: string
 
     @ApiProperty({
         description: 'ID del conductor asignado a la frecuencia',
         example: 1
     })
-    @IsNumber({}, {message: "El id del conductor es un número"})
-    conductor_id: number
+    @IsNotEmpty({message: "El id del conductor es un número"})
+    conductor_id: string
 
     @ApiProperty({
         description: 'Hora de salida de la frecuencia',

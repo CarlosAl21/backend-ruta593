@@ -47,7 +47,7 @@ export class BusesService {
   private async updateAsientos(bus: Bus, newTotalNormales: number, newTotalVip: number) {
     // Obtener todos los asientos actuales del bus
     const asientosActuales = await this.asientoRepository.find({
-      where: { bus: { bus_id: bus.bus_uid } },
+      where: { bus: { bus_id: bus.bus_id } },
       order: { numero_asiento: 'ASC' }
     });
 
@@ -98,7 +98,7 @@ export class BusesService {
 
     // Renumerar todos los asientos para mantener la secuencia
     const todosLosAsientos = await this.asientoRepository.find({
-      where: { bus: { bus_uid: bus.bus_uid } },
+      where: { bus: { bus_id: bus.bus_id } },
       order: { tipo_asiento: 'ASC', numero_asiento: 'ASC' }
     });
 
@@ -130,7 +130,7 @@ export class BusesService {
         this.busesFotoRepository.save({
           url: result.secure_url,
           public_id: result.public_id,
-          bus_uid: newBus.bus_uid
+          bus_id: newBus.bus_id
         })
       );
 
@@ -138,7 +138,7 @@ export class BusesService {
     }
 
     // Retornar el bus con sus fotos
-    return this.findOne(newBus.bus_uid);
+    return this.findOne(newBus.bus_id);
   }
 
   findAll() {
@@ -173,21 +173,21 @@ export class BusesService {
 
   findOne(uid: string) {
     return this.busRepository.findOne({
-      where: { bus_uid: uid },
+      where: { bus_id: uid },
       relations: {
         fotos: true
       }
     });
   }
 
-  async update(uid: string, updateBusDto: UpdateBusDto) {
-    const bus = await this.findOne(uid);
+  async update(id: string, updateBusDto: UpdateBusDto) {
+    const bus = await this.findOne(id);
     if (!bus) {
       throw new ConflictException('El bus no existe');
     }
 
     const busExists = await this.findOneByPlaca(updateBusDto.placa);
-    if (busExists && busExists.bus_uid !== uid) {
+    if (busExists && busExists.bus_id !== id) {
       throw new ConflictException('Ya existe un bus con esa placa');
     }
 
@@ -206,7 +206,7 @@ export class BusesService {
   }
   //Si un bus no esta activo no se puede asignar a una frecuencia
 
-  async remove(id: number) {
+  async remove(id: string) {
     const bus = await this.busRepository.findOneBy({bus_id: id});
     if (!bus) {
       throw new ConflictException('El bus no existe');

@@ -1,7 +1,8 @@
 export enum EstadoReserva {
     PENDIENTE = 'pendiente',
     CONFIRMADA = 'confirmada',
-    CANCELADA = 'cancelada'
+    CANCELADA = 'cancelada',
+    FINALIZADA = 'FINALIZADA',
 }
 
 export enum MetodoPago {

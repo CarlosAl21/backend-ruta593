@@ -16,7 +16,7 @@ export class RutasService {
     private readonly frecuenciasService: FrecuenciasService,
   ) {}
 
-  private async validateParada(paradaId: number) {
+  private async validateParada(paradaId: string) {
     const parada = await this.paradasService.findOne(paradaId);
     if (!parada) {
       throw new NotFoundException(`La parada con ID ${paradaId} no existe`);
@@ -27,7 +27,7 @@ export class RutasService {
     return parada;
   }
 
-  private async validateFrecuencia(frecuenciaId: number) {
+  private async validateFrecuencia(frecuenciaId: string) {
     const frecuencia = await this.frecuenciasService.findOne(frecuenciaId);
     if (!frecuencia) {
       throw new NotFoundException(`La frecuencia con ID ${frecuenciaId} no existe`);
@@ -51,11 +51,11 @@ export class RutasService {
   }
 
   private async validateUniqueRuta(
-    paradaId: number, 
-    frecuenciaId: number, 
+    paradaId: string, 
+    frecuenciaId: string, 
     tiempoParada: string, 
     orden: number,  // Nuevo parámetro de orden
-    rutaId?: number
+    rutaId?: string
   ) {
     // Verificación de parada y frecuencia única
     const existingRutaByParadaFrecuencia = await this.rutaRepository.findOne({
@@ -127,7 +127,7 @@ export class RutasService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const ruta = await this.rutaRepository.findOne({
       where: { rutas_id: id },
       relations: {
@@ -141,7 +141,7 @@ export class RutasService {
     return ruta;
   }
 
-  async findByFrecuencia(frecuenciaId: number) {
+  async findByFrecuencia(frecuenciaId: string) {
     const rutas = await this.rutaRepository.find({
       where: { frecuencia_id: frecuenciaId },
       relations: {
@@ -160,7 +160,7 @@ export class RutasService {
     return rutas;
   }
 
-  async findByParada(paradaId: number) {
+  async findByParada(paradaId: string) {
     const rutas = await this.rutaRepository.find({
       where: { parada_id: paradaId },
       relations: {
@@ -180,7 +180,7 @@ export class RutasService {
     return rutas;
   }
 
-  async update(id: number, updateRutaDto: UpdateRutaDto) {
+  async update(id: string, updateRutaDto: UpdateRutaDto) {
     // Verificar que la ruta exista
     await this.findOne(id);
 
@@ -205,7 +205,7 @@ export class RutasService {
     return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const ruta = await this.rutaRepository.findOneBy({ rutas_id: id });
     if (!ruta) {
       return { message: 'La ruta no existe' };

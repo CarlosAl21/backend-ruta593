@@ -6,17 +6,19 @@ export class CreateFacturaDto {
     description: 'ID de la reserva asociada a la factura',
     example: 1
   })
-  @IsNumber()
+
+  @IsString()
   @IsNotEmpty()
-  reservaId: number;
+  reservaId: string;
 
   @ApiProperty({
     description: 'ID del usuario al que se emite la factura',
     example: 1
   })
-  @IsNumber()
+
+  @IsString()
   @IsNotEmpty()
-  usuarioId: number;
+  usuarioId: string;
   
   @ApiProperty({
     description: 'ID de la cooperativa que emite la factura',
@@ -24,15 +26,17 @@ export class CreateFacturaDto {
     default: 1,
     required: false
   })
-  @IsNumber()
+
+  @IsString()
   @IsOptional()
-  cooperativaId?: number = 1;
+  cooperativaId?: string;
 
   @ApiProperty({
     description: 'ID del boleto asociado a la factura',
     example: 1
   })
-  @IsNumber()
+  
+  @IsString()
   @IsNotEmpty()
-  boleto_id: number;
+  boleto_id: string;
 }

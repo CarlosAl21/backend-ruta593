@@ -11,13 +11,16 @@ import { Boleto } from '../boletos/entities/boleto.entity';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { MailModule } from '../mail/mail.module';
 import { FacturaModule } from '../factura/factura.module';
+import { Viaje } from 'src/viajes/entities/viaje.entity';
+import { ViajesService } from 'src/viajes/viajes.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Reserva, User, Frecuencia, Asiento, Ruta, Boleto]),
+    TypeOrmModule.forFeature([Reserva, User, Frecuencia, Asiento, Ruta, Boleto, Viaje]),
     CloudinaryModule,
     MailModule,
-    FacturaModule
+    FacturaModule,
+    ViajesService
   ],
   controllers: [ReservaController],
   providers: [ReservaService],

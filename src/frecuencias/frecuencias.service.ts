@@ -89,7 +89,7 @@ export class FrecuenciasService {
     );
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const [frecuencia] = await this.findFrecuencias(
       { frecuencia_id: id },
       `Frecuencia con ID ${id} no encontrada`
@@ -97,21 +97,21 @@ export class FrecuenciasService {
     return frecuencia;
   }
 
-  async findByConductor(id: number) {
+  async findByConductor(id: string) {
     return this.findFrecuencias(
       { conductor_id: id },
       `Frecuencias para el conductor con ID ${id} no encontradas`
     );
   }
 
-  async findByBus(id: number) {
+  async findByBus(id: string) {
     return this.findFrecuencias(
       { bus_id: id },
       `Frecuencias para el bus con ID ${id} no encontradas`
     );
   }
 
-  async update(id: number, updateFrecuenciaDto: UpdateFrecuenciaDto) {
+  async update(id: string, updateFrecuenciaDto: UpdateFrecuenciaDto) {
     const frecuencia = await this.findFrecuenciaById(id);
     const { conductor_id, bus_id, hora_salida, hora_llegada } = updateFrecuenciaDto;
 
@@ -140,7 +140,7 @@ export class FrecuenciasService {
     return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const frecuencia = await this.findFrecuenciaById(id);
     
     if (!frecuencia.activo) {
@@ -151,7 +151,7 @@ export class FrecuenciasService {
     return { message: `Frecuencia con ID ${id} desactivada correctamente` };
   }
 
-  private async validateBus(bus_id: number) {
+  private async validateBus(bus_id: string) {
     const bus = await this.busRepository.findOne({
       where: { bus_id },
       select: ['bus_id'],
@@ -162,7 +162,7 @@ export class FrecuenciasService {
     }
   }
 
-  private async validateConductor(conductor_id: number) {
+  private async validateConductor(conductor_id: string) {
     const conductor = await this.userRepository.findOne({
       where: { usuario_id: conductor_id },
       select: ['usuario_id', 'rol'],
@@ -184,19 +184,19 @@ export class FrecuenciasService {
     }
   }
 
-  private async fetchConductorFrecuencias(conductor_id: number) {
+  private async fetchConductorFrecuencias(conductor_id: string) {
     return this.frecuenciaRepository.find({
       where: { conductor_id, activo: true },
     });
   }
 
-  private async fetchBusFrecuencias(bus_id: number) {
+  private async fetchBusFrecuencias(bus_id: string) {
     return this.frecuenciaRepository.find({
       where: { bus_id, activo: true },
     });
   }
 
-  private async fetchConductorFrecuenciasExcludingCurrent(currentId: number, conductor_id: number) {
+  private async fetchConductorFrecuenciasExcludingCurrent(currentId: string, conductor_id: string) {
     return this.frecuenciaRepository.find({
       where: {
         conductor_id,
@@ -263,7 +263,7 @@ export class FrecuenciasService {
     );
   }
 
-  private async findFrecuenciaById(id: number) {
+  private async findFrecuenciaById(id: string) {
     const frecuencia = await this.frecuenciaRepository.findOne({
       where: { frecuencia_id: id },
       relations: defaultRelations,

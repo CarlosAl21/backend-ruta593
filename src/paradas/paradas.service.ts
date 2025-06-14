@@ -46,11 +46,11 @@ export class ParadasService {
     });
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.paradaRepository.findOneBy({parada_id: id});
   }
 
- async update(id: number, updateParadaDto: UpdateParadaDto) {
+ async update(id: string, updateParadaDto: UpdateParadaDto) {
     const parada = await this.findOne(id);
     if (!parada) {
       throw new BadRequestException('La parada no existe');
@@ -63,7 +63,7 @@ export class ParadasService {
     return { message: "Parada Actualizada" };
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const parada = await this.findOne(id);
     if (!parada) {
       throw new BadRequestException('La parada no existe');

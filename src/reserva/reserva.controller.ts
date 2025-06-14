@@ -48,7 +48,7 @@ export class ReservaController {
   })
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.reservaService.findOne(+id);
+    return this.reservaService.findOne(id);
   }
 
   @ApiOperation({ summary: 'Obtener reservas por usuario' })
@@ -64,7 +64,7 @@ export class ReservaController {
   })
   @Get('usuario/:userId')
   findAllByUserId(@Param('userId') userId: string) {
-    return this.reservaService.findAllByUserId(+userId);
+    return this.reservaService.findAllByUserId(userId);
   }
 
   @ApiOperation({ summary: 'Actualizar una reserva' })
@@ -84,7 +84,7 @@ export class ReservaController {
   })
   @Put(':id')
   update(@Param('id') id: string, @Body() updateReservaDto: UpdateReservaDto) {
-    return this.reservaService.update(+id, updateReservaDto);
+    return this.reservaService.update(id, updateReservaDto);
   }
 
   @ApiOperation({ summary: 'Eliminar una reserva' })
@@ -103,6 +103,6 @@ export class ReservaController {
   })
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.reservaService.remove(+id);
+    return this.reservaService.remove(id);
   }
 }

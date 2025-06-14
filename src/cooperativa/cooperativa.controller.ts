@@ -108,7 +108,7 @@ export class CooperativaController {
   })
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.cooperativaService.findOne(+id);
+    return this.cooperativaService.findOne(id);
   }
 
   @ApiOperation({ summary: 'Actualizar una cooperativa' })
@@ -182,7 +182,7 @@ export class CooperativaController {
       })
     ) file?: Express.Multer.File
   ) {
-    return this.cooperativaService.update(+id, updateCooperativaDto, file);
+    return this.cooperativaService.update(id, updateCooperativaDto, file);
   }
 
   @ApiOperation({ summary: 'Eliminar una cooperativa' })

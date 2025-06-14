@@ -6,12 +6,12 @@ export class CreateRutaDto {
         description: 'ID de la frecuencia a la que pertenece la ruta',
         example: 1
     })
-    @IsNumber({}, {message: "La frecuencia debe ser un número"})
-    frecuencia_id: number;
+    @IsString({message: "La frecuencia debe ser un número"})
+    frecuencia_id: string;
 
     @ApiProperty({ description: 'UID de la parada en la ruta', example: 'uuid-string' })
     @IsString()
-    parada_uid: string;
+    parada_id: string;
 
     @ApiProperty({
         description: 'Orden de la parada en la ruta',

@@ -8,7 +8,7 @@ export class Cooperativa {
         example: 'uuid-string'
     })
     @PrimaryGeneratedColumn('uuid')
-    cooperativa_uid: string;
+    cooperativa_id: string;
 
     @ApiProperty({
         description: 'Nombre de la cooperativa de transporte',

@@ -40,7 +40,7 @@ export class RutasController {
   })
   @ApiResponse({ status: 404, description: 'Ruta no encontrada' })
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.rutasService.findOne(id);
   }
 
@@ -52,7 +52,7 @@ export class RutasController {
     type: [CreateRutaDto]
   })
   @Get('frecuencia/:id')
-  findByFrecuencia(@Param('id') id: number) {
+  findByFrecuencia(@Param('id') id: string) {
     return this.rutasService.findByFrecuencia(id);
   }
 
@@ -64,7 +64,7 @@ export class RutasController {
     type: [CreateRutaDto]
   })
   @Get('parada/:id')
-  findByParada(@Param('id') id: number) {
+  findByParada(@Param('id') id: string) {
     return this.rutasService.findByParada(id);
   }
 
@@ -77,7 +77,7 @@ export class RutasController {
   })
   @ApiResponse({ status: 404, description: 'Ruta no encontrada' })
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateRutaDto: UpdateRutaDto) {
+  update(@Param('id') id: string, @Body() updateRutaDto: UpdateRutaDto) {
     return this.rutasService.update(id, updateRutaDto);
   }
 
@@ -89,7 +89,7 @@ export class RutasController {
   })
   @ApiResponse({ status: 404, description: 'Ruta no encontrada' })
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id') id: string) {
     return this.rutasService.remove(id);
   }
 }

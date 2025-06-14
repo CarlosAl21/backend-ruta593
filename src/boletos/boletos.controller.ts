@@ -3,7 +3,6 @@ import { BoletosService } from './boletos.service';
 import { CreateBoletoDto } from './dto/create-boleto.dto';
 import { UpdateBoletoDto } from './dto/update-boleto.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { UUID } from 'sequelize';
 
 @ApiTags('Boletos')
 @Controller('boletos')

@@ -65,8 +65,8 @@ export class BusesController {
   })
   @ApiResponse({ status: 404, description: 'Bus no encontrado' })
   @Get(':uid')
-  findOne(@Param('uid') id: number) {
-    return this.busesService.findOne(uid);
+  findOne(@Param('uid') id: string) {
+    return this.busesService.findOne(id);
   }
 
   @ApiOperation({ summary: 'Buscar bus por placa' })
@@ -91,7 +91,7 @@ export class BusesController {
   })
   @ApiResponse({ status: 404, description: 'Bus no encontrado' })
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateBusDto: UpdateBusDto) {
+  update(@Param('id') id: string, @Body() updateBusDto: UpdateBusDto) {
     return this.busesService.update(id, updateBusDto);
   }
 
@@ -104,7 +104,7 @@ export class BusesController {
   
   @ApiResponse({ status: 404, description: 'Bus no encontrado' })
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id') id: string) {
     return this.busesService.remove(id);
   }
 }

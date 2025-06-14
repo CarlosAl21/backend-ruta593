@@ -4,7 +4,7 @@ import { Ruta } from '../../rutas/entities/ruta.entity';
 @Entity('paradas')
 export class Parada {
   @PrimaryGeneratedColumn('uuid')
-  parada_uid: string;
+  parada_id: string;
 
   @Column()
   ciudad: string;

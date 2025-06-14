@@ -6,21 +6,21 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, Jo
 @Entity('comprobante_pago')
 export class ComprobantePago {
   @PrimaryGeneratedColumn('uuid')
-  comprobante_uid: string;
+  comprobante_id: string;
 
   @ManyToOne(() => Boleto, boleto => boleto.comprobantes)
   @JoinColumn({ name: 'boleto_uid' })
   boleto: Boleto;
 
   @Column()
-  boleto_uid: string;
+  boleto_id: string;
 
   @ManyToOne(() => User, user => user.comprobantes)
   @JoinColumn({ name: 'usuario_uid' })
   usuario: User;
 
   @Column()
-  usuario_uid: string;
+  usuario_id: string;
 
   @Column({nullable: true})
   url_comprobante: string;

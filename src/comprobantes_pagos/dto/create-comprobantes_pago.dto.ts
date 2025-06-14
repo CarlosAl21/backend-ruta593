@@ -1,16 +1,18 @@
+import { DeepPartial } from 'typeorm';
 import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 import { Type } from "class-transformer";
 import { EstadoComprobante } from "src/common/enums/comprobantes.enum";
 import { ApiProperty } from "@nestjs/swagger";
+import { User } from "src/user/entities/user.entity";
 
 export class CreateComprobantesPagoDto {
     @ApiProperty({ description: 'UID del boleto asociado al comprobante', example: 'uuid-string' })
     @IsString()
-    boleto_uid: string;
+    boleto_id: string;
 
     @ApiProperty({ description: 'UID del usuario que realiza el pago', example: 'uuid-string' })
     @IsString()
-    usuario_uid: string;
+    usuario_id: string;
 
     @ApiProperty({
         description: 'URL de la imagen del comprobante de pago',

@@ -19,6 +19,7 @@ import { FacturaModule } from './factura/factura.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ViajesModule } from './viajes/viajes.module';
+import { DescuentosModule } from './descuentos/descuentos.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { ViajesModule } from './viajes/viajes.module';
     CooperativaModule,
     FacturaModule,
     ViajesModule,
+    DescuentosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

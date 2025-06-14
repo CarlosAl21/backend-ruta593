@@ -9,13 +9,13 @@ export class Viaje {
     @Column({ type: 'date' })
     fecha_salida: Date;
 
-    @Column({ type: 'number' })
+    @Column({ type: 'int' })
     num_asientos_disponibles: number;
 
-    @Column({ type: 'number' })
+    @Column({ type: 'int' })
     num_asientos_ocupados: number;
 
-    @Column({ type: 'string'})
+    @Column({ type: 'varchar', length: 50 })
     estado: string;
 
     @ManyToOne(() => Frecuencia, frecuencia => frecuencia.viajes, { eager: true })

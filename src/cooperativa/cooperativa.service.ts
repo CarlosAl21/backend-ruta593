@@ -46,11 +46,11 @@ export class CooperativaService {
     return cooperativa;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.cooperativaRepository.findOneBy({ cooperativa_id: id });
   }
 
-  async update(id: number, updateCooperativaDto: UpdateCooperativaDto, file?: Express.Multer.File) {
+  async update(id: string, updateCooperativaDto: UpdateCooperativaDto, file?: Express.Multer.File) {
     const cooperativa = await this.findOne(id);
     if (!cooperativa) {
       throw new Error('Cooperativa no encontrada');

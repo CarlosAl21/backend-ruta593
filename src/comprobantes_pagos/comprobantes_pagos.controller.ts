@@ -128,7 +128,7 @@ export class ComprobantesPagosController {
     type: [CreateComprobantesPagoDto],
   })
   @Get('user/:id')
-  findAllByUser(@Param('id') id: number) {
+  findAllByUser(@Param('id') id: string) {
     return this.comprobantesPagosService.findAllByUser(id);
   }
 
@@ -163,7 +163,7 @@ export class ComprobantesPagosController {
     description: 'Comprobante de pago no encontrado',
   })
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.comprobantesPagosService.findOne(id);
   }
 
@@ -184,7 +184,7 @@ export class ComprobantesPagosController {
   @Put(':id')
   @UseInterceptors(FileInterceptor('file')) // Agregar esto
   update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File, // Agregar esto
     @Body() updateComprobantesPagoDto: UpdateComprobantesPagoDto,
   ) {
@@ -206,7 +206,7 @@ export class ComprobantesPagosController {
     description: 'Comprobante de pago no encontrado',
   })
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id') id: string) {
     return this.comprobantesPagosService.remove(id);
   }
 }

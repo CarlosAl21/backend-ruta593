@@ -16,6 +16,9 @@ import { EstadoBoleto } from '../common/enums/boletos.enum';
 import * as QRCode from 'qrcode';
 import { Asientos } from '../common/enums/asientos.enum';
 import { FacturaService } from '../factura/factura.service';
+import { Viaje } from 'src/viajes/entities/viaje.entity';
+import { ViajesService } from 'src/viajes/viajes.service';
+import { DescuentosService } from 'src/descuentos/descuentos.service';
 
 interface QRCodeData {
   total: number;
@@ -43,6 +46,10 @@ export class ReservaService {
     private readonly cloudinaryService: CloudinaryService,
     private readonly mailService: MailService,
     private readonly facturaService: FacturaService,
+    @InjectRepository(Viaje)
+    private readonly viajeRepository: Repository<Viaje>,
+    private readonly viajesService: ViajesService,
+    private readonly descuentosService: DescuentosService,
   ) { }
 
   async create(createReservaDto: CreateReservaDto): Promise<Reserva> {
@@ -59,17 +66,38 @@ export class ReservaService {
       this.findFrecuenciaById(createReservaDto.frecuencia_id)
     ]);
 
-    const precio = await this.calcularPrecio(
+    let precio = await this.calcularPrecio(
       createReservaDto.destino_reserva,
       createReservaDto.frecuencia_id,
       createReservaDto.asiento_id
     );
+
+    // Si viene un código de descuento, aplicar el descuento
+    if (createReservaDto.codigo_descuento) {
+      const descuento = await this.descuentosService.findByCodigo(createReservaDto.codigo_descuento);
+      if (descuento && descuento.activo) {
+        precio = precio - (precio * (descuento.porcentaje / 100));
+      }
+    }
 
     const reserva = await this.createReservaEntity(createReservaDto, usuario, frecuencia, precio);
     const reservaGuardada = await this.reservaRepository.save(reserva);
 
     if (reservaGuardada.boleto_id) {
       await this.actualizarBoleto(reservaGuardada.boleto_id);
+    }
+
+    // Llamar a actualizarAsientosOcupados si la reserva tiene viaje asociado
+    if (reservaGuardada.frecuencia_id && reservaGuardada.fecha_viaje) {
+      const viaje = await this.viajeRepository.findOne({
+        where: {
+          id_frecuencia: { frecuencia_id: reservaGuardada.frecuencia_id },
+          fecha_salida: reservaGuardada.fecha_viaje
+        }
+      });
+      if (viaje) {
+        await this.viajesService.actualizarAsientosOcupados(viaje.id_viaje);
+      }
     }
 
     //Cuando el tipo de pago es presencial o paypal, se envia un correo de confirmacion
@@ -97,7 +125,7 @@ export class ReservaService {
     return reservaGuardada;
   }
 
-  async update(id: number, updateReservaDto: UpdateReservaDto): Promise<Reserva> {
+  async update(id: string, updateReservaDto: UpdateReservaDto): Promise<Reserva> {
     const reserva = await this.findOne(id);
     const estadoAnterior = reserva.estado;
 
@@ -118,7 +146,7 @@ export class ReservaService {
     return reservaActualizada;
   }
 
-  async findOne(id: number): Promise<Reserva> {
+  async findOne(id: string): Promise<Reserva> {
     const reserva = await this.reservaRepository.findOne({
       where: { reserva_id: id },
       relations: ['asiento', 'boleto', 'boleto.reservas', 'boleto.reservas.asiento']
@@ -138,7 +166,7 @@ export class ReservaService {
     });
   }
 
-  async findAllByUserId(userId: number): Promise<Reserva[]> {
+  async findAllByUserId(userId: string): Promise<Reserva[]> {
     const user = await this.userRepository.findOne({ where: { usuario_id: userId } });
     if (!user) {
       throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
@@ -151,7 +179,7 @@ export class ReservaService {
     });
   }
 
-  async remove(id: number): Promise<Reserva> {
+  async remove(id: string): Promise<Reserva> {
     const reserva = await this.findOne(id);
     
     if (!reserva) {
@@ -218,7 +246,7 @@ export class ReservaService {
     throw new ConflictException('Solo se pueden cancelar reservas con método de pago por depósito y que no estén confirmadas');
   }
 
-  async cancelarReservasPendientes(asientoId: number, fechaViaje: Date): Promise<void> {
+  async cancelarReservasPendientes(asientoId: string, fechaViaje: Date): Promise<void> {
     // Buscar reservas pendientes para el mismo asiento y fecha
     const reservasPendientes = await this.reservaRepository.find({
       where: {
@@ -235,7 +263,7 @@ export class ReservaService {
     }
   }
 
-  async calcularPrecio(destinoReserva: string, frecuenciaId: number, asientoId: number): Promise<number> {
+  async calcularPrecio(destinoReserva: string, frecuenciaId: string, asientoId: string): Promise<number> {
     const [frecuencia, asiento] = await Promise.all([
       this.findFrecuenciaWithRutas(frecuenciaId),
       this.findAsientoById(asientoId)
@@ -291,7 +319,7 @@ export class ReservaService {
     return reserva;
   }
 
-  async actualizarBoleto(boletoId: number): Promise<void> {
+  async actualizarBoleto(boletoId: string): Promise<void> {
     const boleto = await this.boletoRepository.findOne({
       where: { boleto_id: boletoId },
       relations: ['reservas']
@@ -375,7 +403,7 @@ export class ReservaService {
     await this.boletoRepository.save(boleto);
   }
 
-  private async findUserById(userId: number): Promise<User> {
+  private async findUserById(userId: string): Promise<User> {
     const usuario = await this.userRepository.findOne({ where: { usuario_id: userId } });
     if (!usuario) {
       throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
@@ -383,7 +411,7 @@ export class ReservaService {
     return usuario;
   }
 
-  private async findFrecuenciaById(frecuenciaId: number): Promise<Frecuencia> {
+  private async findFrecuenciaById(frecuenciaId: string): Promise<Frecuencia> {
     const frecuencia = await this.frecuenciaRepository.findOne({
       where: { frecuencia_id: frecuenciaId }
     });
@@ -393,7 +421,7 @@ export class ReservaService {
     return frecuencia;
   }
 
-  private async findFrecuenciaWithRutas(frecuenciaId: number): Promise<Frecuencia> {
+  private async findFrecuenciaWithRutas(frecuenciaId: string): Promise<Frecuencia> {
     const frecuencia = await this.frecuenciaRepository.findOne({
       where: { frecuencia_id: frecuenciaId },
       relations: { rutas: { parada: true } },
@@ -404,7 +432,7 @@ export class ReservaService {
     return frecuencia;
   }
 
-  private async findAsientoById(asientoId: number): Promise<Asiento> {
+  private async findAsientoById(asientoId: string): Promise<Asiento> {
     const asiento = await this.asientoRepository.findOne({ where: { asiento_id: asientoId } });
     if (!asiento) {
       throw new NotFoundException(`Asiento con ID ${asientoId} no encontrado`);
@@ -492,8 +520,8 @@ export class ReservaService {
   }
 
   private async buscarBoletoExistente(
-    usuarioId: number,
-    frecuenciaId: number,
+    usuarioId: string,
+    frecuenciaId: string,
     fechaViaje: Date,
     destinoReserva: string
   ): Promise<Boleto | null> {
@@ -559,12 +587,12 @@ export class ReservaService {
         boleto_id: reserva.boleto_id,
         reservaId: reserva.reserva_id,
         usuarioId: reserva.usuario_id,
-        cooperativaId: 1 // Valor fijo como especificado
+        cooperativaId: '1' // Valor fijo como especificado
       });
     }
   }
 
-  private async actualizarFactura(boletoId: number): Promise<void> {
+  private async actualizarFactura(boletoId: string): Promise<void> {
     const boleto = await this.boletoRepository.findOne({
       where: { boleto_id: boletoId },
       relations: ['reservas']
@@ -581,7 +609,7 @@ export class ReservaService {
           boleto_id: boleto.boleto_id,
           reservaId: reserva.reserva_id,
           usuarioId: reserva.usuario_id,
-          cooperativaId: 1
+          cooperativaId: '1'
         });
         break; // Solo necesitamos actualizar una vez
       }

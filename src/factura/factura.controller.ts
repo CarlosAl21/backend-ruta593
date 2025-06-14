@@ -35,7 +35,7 @@ export class FacturaController {
     description: 'Usuario no encontrado'
   })
   @Get('usuario/:id')
-  findByUser(@Param('id', ParseIntPipe) usuarioId: number): Promise<Factura[]> {
+  findByUser(@Param('id', ParseIntPipe) usuarioId: string): Promise<Factura[]> {
     return this.facturaService.findByUser(usuarioId);
   }
 }

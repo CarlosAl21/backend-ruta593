@@ -8,35 +8,35 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDa
 @Entity("reservas")
 export class Reserva {
     @PrimaryGeneratedColumn('uuid')
-    reserva_uid: string
+    reserva_id: string
 
     @ManyToOne(() => User, user => user.reservas)
     @JoinColumn({ name: 'usuario_uid' })
     usuario: User;
 
     @Column()
-    usuario_uid: string;
+    usuario_id: string;
     
     @ManyToOne(() => Asiento, asiento => asiento.reservas)
     @JoinColumn({ name: 'asiento_uid' })
     asiento: Asiento;
 
     @Column()
-    asiento_uid: string
+    asiento_id: string
 
     @ManyToOne(() => Frecuencia, frecuencia => frecuencia.reservas)
     @JoinColumn({ name: 'frecuencia_id' })
     frecuencia: Frecuencia;
 
     @Column()
-    frecuencia_id: number
+    frecuencia_id: string
 
     @ManyToOne(() => Boleto, boleto => boleto.reservas)
     @JoinColumn({ name: 'boleto_uid' })
     boleto: Boleto;
 
     @Column({ nullable: true })
-    boleto_uid: string
+    boleto_id: string
 
     @Column(
         {

@@ -40,7 +40,7 @@ export class ParadasController {
   })
   @ApiResponse({ status: 404, description: 'Parada no encontrada' })
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.paradasService.findOne(id);
   }
 
@@ -77,7 +77,7 @@ export class ParadasController {
   })
   @ApiResponse({ status: 404, description: 'Parada no encontrada' })
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateParadaDto: UpdateParadaDto) {
+  update(@Param('id') id: string, @Body() updateParadaDto: UpdateParadaDto) {
     return this.paradasService.update(id, updateParadaDto);
   }
 
@@ -89,7 +89,7 @@ export class ParadasController {
   })
   @ApiResponse({ status: 404, description: 'Parada no encontrada' })
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id') id: string) {
     return this.paradasService.remove(id);
   }
 }

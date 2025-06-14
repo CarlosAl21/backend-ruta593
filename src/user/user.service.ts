@@ -33,7 +33,7 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.userRepository.findOneBy({usuario_id: id});
   }
 
@@ -64,13 +64,13 @@ export class UserService {
     });
 }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     await this.validateUser(id,updateUserDto);
     await this.userRepository.update({usuario_id: id}, updateUserDto);
     return {message: "Usuario actualizado"};
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const user = await this.userRepository.findOneBy({usuario_id: id});
     if (!user) {
       return {message: "El usuario no existe"};
@@ -80,7 +80,7 @@ export class UserService {
     return {message: "Usuario eliminado"};
   }
 
-  async validateUser(id:number,user: UpdateUserDto){
+  async validateUser(id:string,user: UpdateUserDto){
     const userE = await this.userRepository.findOneBy({usuario_id: id});
     if (!userE) {
       throw new BadRequestException('El usuario no existe');

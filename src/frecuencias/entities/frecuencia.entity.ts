@@ -7,21 +7,21 @@ import { Viaje } from 'src/viajes/entities/viaje.entity';
 
 @Entity('frecuencias')
 export class Frecuencia {
-  @PrimaryGeneratedColumn()
-  frecuencia_id: number;
+  @PrimaryGeneratedColumn('uuid')
+  frecuencia_id: string;
 
   @Column()
   nombre_frecuencia: string;
 
   @Column()
-  bus_id: number;
+  bus_id: string;
 
   @ManyToOne(() => Bus, bus => bus.frecuencias, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'bus_id' })
   bus: Bus;
 
   @Column()
-  conductor_id: number;
+  conductor_id: string;
 
   @ManyToOne(() => User, user => user.frecuencias_conductor, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'conductor_id' })

@@ -6,7 +6,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 @Entity()
 export class Asiento {
     @PrimaryGeneratedColumn('uuid')
-    asiento_uid: string;
+    asiento_id: string;
 
     @Column({type:"enum", default:Asientos.NORMAL, enum:Asientos})
     tipo_asiento: Asientos;

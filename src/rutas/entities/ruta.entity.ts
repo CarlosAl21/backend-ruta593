@@ -6,17 +6,17 @@ import { Parada } from '../../paradas/entities/parada.entity';
 export class Ruta {
   //TODO: agregar la relacion con la parada y la frecuencia
   @PrimaryGeneratedColumn('uuid')
-  rutas_uid: string;
+  rutas_id: string;
 
   @Column()
-  frecuencia_id: number; // No modificar porque es de frecuencias
+  frecuencia_id: string; // No modificar porque es de frecuencias
 
   @ManyToOne(() => Frecuencia, frecuencia => frecuencia.rutas, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'frecuencia_id' })
   frecuencia: Frecuencia;
 
   @Column()
-  parada_uid: string;
+  parada_id: string;
 
   @ManyToOne(() => Parada, parada => parada.rutas, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'parada_uid' })

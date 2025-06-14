@@ -35,7 +35,7 @@ export class FacturaService {
         relations: ['reservas', 'reservas.frecuencia', 'reservas.frecuencia.bus']
       }),
       this.cooperativaRepository.findOne({
-        where: { cooperativa_id: createFacturaDto.cooperativaId || 1 }
+        where: { cooperativa_id: createFacturaDto.cooperativaId }
       }),
       this.reservaRepository.findOne({
         where: { reserva_id: createFacturaDto.reservaId },
@@ -55,44 +55,50 @@ export class FacturaService {
     const facturasAnteriores = await this.facturaRepository.find({
       where: { boleto_id: boleto.boleto_id }
     });
-    
+
     if (facturasAnteriores.length > 0) {
       await this.facturaRepository.remove(facturasAnteriores);
     }
 
     // Generar número de factura único
-    const numeroFactura = await this.generateFacturaNumber();
+    const numero_factura = await this.generateFacturaNumber();
 
     // Crear la nueva factura
     const factura = this.facturaRepository.create({
-      numeroFactura,
+      numero_factura: numero_factura, // propiedad exacta según la entidad
       subtotal: boleto.total,
       iva: 0,
       total: boleto.total,
       reserva,
-      usuario,
-      cooperativa,
-      boleto,
       reservaId: reserva.reserva_id,
+      usuario,
       usuarioId: usuario.usuario_id,
+      cooperativa,
       cooperativaId: cooperativa.cooperativa_id,
+      boleto,
       boleto_id: boleto.boleto_id
     });
 
     // Guardar la factura
     const facturaGuardada = await this.facturaRepository.save(factura);
 
+    // Obtener la factura guardada con todas las relaciones necesarias
+    const facturaCompleta = await this.facturaRepository.findOne({
+      where: { factura_id: facturaGuardada.factura_id },
+      relations: ['reserva', 'usuario', 'cooperativa', 'boleto', 'reserva.frecuencia', 'reserva.frecuencia.bus']
+    });
+
     // Generar PDF con los datos actualizados del boleto
-    const pdfBuffer = await this.generatePdf(facturaGuardada);
+    const pdfBuffer = await this.generatePdf(facturaCompleta);
     const uploadResult = await this.cloudinaryService.uploadBuffer(pdfBuffer, 'facturas');
 
     // Actualizar la URL del PDF
-    await this.facturaRepository.update(facturaGuardada.id, {
+    await this.facturaRepository.update(facturaGuardada.factura_id, {
       pdfUrl: uploadResult.secure_url,
     });
 
     return this.facturaRepository.findOne({
-      where: { id: facturaGuardada.id },
+      where: { factura_id: facturaGuardada.factura_id },
       relations: ['reserva', 'usuario', 'cooperativa', 'boleto']
     });
   }
@@ -103,16 +109,16 @@ export class FacturaService {
     });
   }
 
-  async findByUser(usuarioId: number): Promise<Factura[]> {
+  async findByUser(usuario_id: string): Promise<Factura[]> {
     return this.facturaRepository.find({
-      where: { usuarioId },
+      where: { usuarioId: usuario_id },
       relations: ['reserva', 'usuario', 'cooperativa', 'boleto']
     });
   }
 
-  async findOne(id: number): Promise<Factura> {
+  async findOne(id: string): Promise<Factura> {
     const factura = await this.facturaRepository.findOne({
-      where: { id },
+      where: { factura_id: id },
       relations: [
         'reserva',
         'usuario',
@@ -130,9 +136,9 @@ export class FacturaService {
     return factura;
   }
 
-  async findByReservaId(reservaId: number): Promise<Factura | null> {
+  async findByReservaId(reserva_id: string): Promise<Factura | null> {
     return this.facturaRepository.findOne({
-      where: { reservaId },
+      where: { reservaId: reserva_id },
       relations: ['reserva', 'usuario', 'cooperativa', 'boleto']
     });
   }

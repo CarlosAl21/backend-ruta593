@@ -36,7 +36,7 @@ export class ComprobantesPagosService {
    * @param usuario_id ID del usuario
    * @param boleto_id ID del boleto
    */
-  private async verificarUsuarioBoletoReserva(usuario_id: number, boleto_id: number): Promise<boolean> {
+  private async verificarUsuarioBoletoReserva(usuario_id: string, boleto_id: string): Promise<boolean> {
     const boleto = await this.boletoRepository.findOne({
       where: { boleto_id },
       relations: ['reservas', 'reservas.usuario']
@@ -113,7 +113,7 @@ export class ComprobantesPagosService {
    * Obtiene un comprobante de pago por ID.
    * @param id Identificador del comprobante.
    */
-  async findOne(id: number) {
+  async findOne(id: string) {
     const comprobante = await this.comprobantePagoRepository.findOne({
       where: { comprobante_id: id },
       relations: {
@@ -136,7 +136,7 @@ export class ComprobantesPagosService {
    * Actualiza el estado del boleto y la reserva cuando se aprueba el comprobante
    * @param boleto_id ID del boleto
    */
-  private async actualizarEstadosBoletoReserva(boleto_id: number): Promise<void> {
+  private async actualizarEstadosBoletoReserva(boleto_id: string): Promise<void> {
     const boleto = await this.boletoRepository.findOne({
       where: { boleto_id },
       relations: ['reservas', 'reservas.asiento']
@@ -193,7 +193,7 @@ export class ComprobantesPagosService {
       boleto_id: boleto.boleto_id,
       reservaId: primeraReserva.reserva_id,
       usuarioId: primeraReserva.usuario_id,
-      cooperativaId: 1
+      cooperativaId: "1"
     });
   }
 
@@ -202,7 +202,7 @@ export class ComprobantesPagosService {
    * @param id Identificador del comprobante.
    * @param updateComprobantesPagoDto Datos actualizados del comprobante (solo estado, comentarios y url_comprobante).
    */
-  async update(id: number, updateComprobantesPagoDto: UpdateComprobantesPagoDto) {
+  async update(id: string, updateComprobantesPagoDto: UpdateComprobantesPagoDto) {
     const comprobante = await this.findOne(id);
     
     // Si el estado se está actualizando a APROBADO
@@ -240,7 +240,7 @@ export class ComprobantesPagosService {
    * Elimina un comprobante de pago por ID.
    * @param id Identificador del comprobante.
    */
-  async remove(id: number) {
+  async remove(id: string) {
     await this.findOne(id); // Verifica que el comprobante exista antes de eliminarlo
     await this.comprobantePagoRepository.delete(id);
     return { message: 'Comprobante de pago eliminado correctamente' };
@@ -250,7 +250,7 @@ export class ComprobantesPagosService {
    * Obtiene todos los comprobantes de pago de un usuario.
    * @param id Identificador del usuario.
    */
-  async findAllByUser(id: number) {
+  async findAllByUser(id: string) {
     const comprobantes = await this.comprobantePagoRepository.find({
       where: { usuario_id: id },
       relations: {
