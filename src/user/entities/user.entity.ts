@@ -6,8 +6,8 @@ import { Reserva } from "src/reserva/entities/reserva.entity";
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    usuario_id: number;
+    @PrimaryGeneratedColumn('uuid')
+    usuario_uid: string;
 
     @Column({unique: true})
     identificacion: string;

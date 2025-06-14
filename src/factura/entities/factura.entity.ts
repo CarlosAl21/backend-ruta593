@@ -9,10 +9,10 @@ import { ApiProperty } from '@nestjs/swagger';
 export class Factura {
   @ApiProperty({
     description: 'ID único de la factura',
-    example: 1
+    example: 'uuid-string'
   })
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  factura_uid: string;
 
   @ApiProperty({
     description: 'Número de factura único',

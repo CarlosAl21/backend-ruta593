@@ -6,8 +6,8 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("boletos")
 export class Boleto {
-    @PrimaryGeneratedColumn()
-    boleto_id: number
+    @PrimaryGeneratedColumn('uuid')
+    boleto_uid: string
 
     @Column("float")
     total: number

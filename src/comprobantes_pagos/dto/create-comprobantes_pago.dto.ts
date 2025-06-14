@@ -4,21 +4,13 @@ import { EstadoComprobante } from "src/common/enums/comprobantes.enum";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateComprobantesPagoDto {
-    @ApiProperty({
-        description: 'ID del boleto asociado al comprobante',
-        example: 1
-    })
-    @IsNumber()
-    @Type(() => Number)
-    boleto_id: number;
+    @ApiProperty({ description: 'UID del boleto asociado al comprobante', example: 'uuid-string' })
+    @IsString()
+    boleto_uid: string;
 
-    @ApiProperty({
-        description: 'ID del usuario que realiza el pago',
-        example: 1
-    })
-    @IsNumber()
-    @Type(() => Number)
-    usuario_id: number;
+    @ApiProperty({ description: 'UID del usuario que realiza el pago', example: 'uuid-string' })
+    @IsString()
+    usuario_uid: string;
 
     @ApiProperty({
         description: 'URL de la imagen del comprobante de pago',

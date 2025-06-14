@@ -63,9 +63,9 @@ export class BoletosService {
     return boletos;
   }
 
-  async findOne(id: number) {
+  async findOne(uid: string) {
     const boleto = await this.boletoRepository.findOne({
-      where: { boleto_id: id },
+      where: { boleto_uid: uid },
       relations: ['reservas', 'reservas.asiento']
     });
     if(!boleto){
@@ -88,18 +88,18 @@ export class BoletosService {
     return boleto;
   }
 
-  update(id: number, updateBoletoDto: UpdateBoletoDto) {
-    return `This action updates a #${id} boleto`;
+  update(uid: string, updateBoletoDto: UpdateBoletoDto) {
+    return `This action updates a #${uid} boleto`;
   }
 
-  async remove(id: number) {
+  async remove(uid: string) {
     const boleto = await this.boletoRepository.findOne({
-      where: { boleto_id: id },
+      where: { boleto_uid: uid },
       relations: ['reservas', 'reservas.asiento']
     });
 
     if (!boleto) {
-      throw new NotFoundException(`Boleto con ID ${id} no encontrado`);
+      throw new NotFoundException(`Boleto con UID ${uid} no encontrado`);
     }
 
     // Si hay dos reservas, solo eliminar los datos de la reserva cancelada

@@ -5,20 +5,18 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateReservaDto {
     @ApiProperty({
-        description: 'ID del usuario que realiza la reserva',
-        example: 1
+        description: 'UID del usuario que realiza la reserva',
+        example: 'uuid-string'
     })
-    @IsNumber()
-    @Type(() => Number)
-    usuario_id: number
+    @IsString()
+    usuario_uid: string;
 
     @ApiProperty({
-        description: 'ID del asiento a reservar',
-        example: 15
+        description: 'UID del asiento a reservar',
+        example: 'uuid-string'
     })
-    @IsNumber()
-    @Type(() => Number)
-    asiento_id: number
+    @IsString()
+    asiento_uid: string;
 
     @ApiProperty({
         description: 'ID de la frecuencia del viaje',
@@ -26,17 +24,7 @@ export class CreateReservaDto {
     })
     @IsNumber()
     @Type(() => Number)
-    frecuencia_id: number
-
-    @ApiProperty({
-        description: 'ID del boleto asociado (opcional)',
-        example: 1,
-        required: false
-    })
-    @IsOptional()
-    @IsNumber()
-    @Type(() => Number)
-    boleto_id?: number
+    frecuencia_id: number;
 
     @ApiProperty({
         description: 'Nombre del pasajero',
@@ -45,7 +33,7 @@ export class CreateReservaDto {
     })
     @IsOptional()
     @IsString()
-    nombre_pasajero?: string
+    nombre_pasajero?: string;
 
     @ApiProperty({
         description: 'Método de pago de la reserva',
@@ -56,7 +44,7 @@ export class CreateReservaDto {
     })
     @IsEnum(MetodoPago)
     @IsOptional()
-    metodo_pago: MetodoPago = MetodoPago.PRESENCIAL
+    metodo_pago: MetodoPago = MetodoPago.PRESENCIAL;
 
     @ApiProperty({
         description: 'Número de identificación del pasajero',
@@ -65,7 +53,7 @@ export class CreateReservaDto {
     })
     @IsOptional()
     @IsString()
-    identificacion_pasajero?: string
+    identificacion_pasajero?: string;
 
     @ApiProperty({
         description: 'Estado de la reserva',
@@ -76,7 +64,7 @@ export class CreateReservaDto {
     })
     @IsOptional()
     @IsEnum(EstadoReserva)
-    estado?: EstadoReserva
+    estado?: EstadoReserva;
 
     @ApiProperty({
         description: 'Fecha del viaje',
@@ -85,7 +73,7 @@ export class CreateReservaDto {
     })
     @IsDate()
     @Type(() => Date)
-    fecha_viaje: Date
+    fecha_viaje: Date;
 
     @ApiProperty({
         description: 'Hora del viaje en formato HH:mm',
@@ -94,7 +82,7 @@ export class CreateReservaDto {
     })
     @IsOptional()
     @IsString()
-    hora_viaje?: string
+    hora_viaje?: string;
 
     @ApiProperty({
         description: 'Precio de la reserva',
@@ -104,7 +92,7 @@ export class CreateReservaDto {
     @IsOptional()
     @IsNumber()
     @Type(() => Number)
-    precio?: number
+    precio?: number;
 
     @ApiProperty({
         description: 'Destino de la reserva',
@@ -112,5 +100,5 @@ export class CreateReservaDto {
         required: true
     })
     @IsString()
-    destino_reserva: string
+    destino_reserva: string;
 }
