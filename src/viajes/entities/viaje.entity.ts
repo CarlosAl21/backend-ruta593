@@ -15,6 +15,9 @@ export class Viaje {
     @Column({ type: 'number' })
     num_asientos_ocupados: number;
 
+    @Column({ type: 'string'})
+    estado: string;
+
     @ManyToOne(() => Frecuencia, frecuencia => frecuencia.viajes, { eager: true })
     @JoinColumn({ name: 'id_frecuencia' })
     id_frecuencia: Frecuencia;
