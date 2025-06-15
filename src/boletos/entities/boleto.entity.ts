@@ -3,6 +3,7 @@ import { ComprobantePago } from "src/comprobantes_pagos/entities/comprobantes_pa
 import { Factura } from "src/factura/entities/factura.entity";
 import { Reserva } from "src/reserva/entities/reserva.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Pago } from '../../pagos/entidades/pago.entity';
 
 @Entity("boletos")
 export class Boleto {
@@ -41,4 +42,7 @@ export class Boleto {
 
     @OneToMany(() => ComprobantePago, comprobante => comprobante.boleto)
     comprobantes: ComprobantePago[]
+
+    @OneToMany(() => Pago, pago => pago.boleto)
+    pagos: Pago[];
 }

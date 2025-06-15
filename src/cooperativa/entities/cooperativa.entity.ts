@@ -1,5 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
+import { ClienteCooperativa } from '../../clientes_cooperativas/entidades/cliente_cooperativa.entity';
+import { Pago } from '../../pagos/entidades/pago.entity';
 
 @Entity()
 export class Cooperativa {
@@ -51,4 +53,10 @@ export class Cooperativa {
     })
     @Column()
     direccion: string;
+
+    @OneToMany(() => ClienteCooperativa, cc => cc.cooperativa)
+    clientes: ClienteCooperativa[];
+
+    @OneToMany(() => Pago, pago => pago.cooperativa)
+    pagos: Pago[];
 }
