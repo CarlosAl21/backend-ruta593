@@ -21,6 +21,8 @@ import { AppService } from './app.service';
 import { ViajesModule } from './viajes/viajes.module';
 import { DescuentosModule } from './descuentos/descuentos.module';
 import { ClientesCooperativasModule } from './clientes_cooperativas/clientes_cooperativas.module';
+import { MetodoPago } from './metodos_pago/entidades/metodo_pago.entity';
+import { Pago } from './pagos/entidades/pago.entity';
 
 @Module({
   imports: [
@@ -34,11 +36,12 @@ import { ClientesCooperativasModule } from './clientes_cooperativas/clientes_coo
       database: process.env.DB_NAME,
       schema: process.env.DB_SCHEMA,
       autoLoadEntities: true,
-      extra: {
-        options: `-c search_path=${process.env.DB_SCHEMA}`,
-      },
+      entities: [MetodoPago, Pago /*, otras entidades*/],
       // ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
       synchronize: true,
+      extra: {
+        options: `-c search_path=${process.env.DB_SCHEMA},public`,
+      },
     }),
     UserModule,
     AuthModule,
