@@ -20,6 +20,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ViajesModule } from './viajes/viajes.module';
 import { DescuentosModule } from './descuentos/descuentos.module';
+import { ClientesCooperativasModule } from './clientes_cooperativas/clientes_cooperativas.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { DescuentosModule } from './descuentos/descuentos.module';
     FacturaModule,
     ViajesModule,
     DescuentosModule,
+    ClientesCooperativasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

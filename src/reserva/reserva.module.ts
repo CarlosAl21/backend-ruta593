@@ -12,7 +12,8 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { MailModule } from '../mail/mail.module';
 import { FacturaModule } from '../factura/factura.module';
 import { Viaje } from 'src/viajes/entities/viaje.entity';
-import { ViajesService } from 'src/viajes/viajes.service';
+import { ViajesModule } from 'src/viajes/viajes.module';
+import { DescuentosModule } from '../descuentos/descuentos.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { ViajesService } from 'src/viajes/viajes.service';
     CloudinaryModule,
     MailModule,
     FacturaModule,
-    ViajesService
+    ViajesModule,
+    DescuentosModule
   ],
   controllers: [ReservaController],
   providers: [ReservaService],
