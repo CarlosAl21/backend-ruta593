@@ -52,24 +52,28 @@ export class BoletosService {
   }
 
   async findAllByUserId(userId: string) {
-    // Buscar todas las reservas confirmadas del usuario, incluyendo el boleto y sus reservas/asientos
+    // Buscar todas las reservas confirmadas del usuario
     const reservas = await this.reservaRepository.find({
-      where: { usuario_id: userId, estado: EstadoReserva.CONFIRMADA },
-      relations: ['boleto', 'boleto.reservas', 'boleto.reservas.asiento']
+      where: { usuario_id: userId, estado: EstadoReserva.CONFIRMADA }
     });
 
     if (!reservas.length) {
       throw new NotFoundException(`No se encontraron reservas confirmadas para el usuario con ID ${userId}`);
     }
 
-    // Filtrar boletos únicos y válidos
-    const boletosMap = new Map<string, Boleto>();
+    // Buscar y guardar todos los boletos asociados a las reservas
+    const boletos: Boleto[] = [];
     for (const reserva of reservas) {
-      if (reserva.boleto && !boletosMap.has(reserva.boleto.boleto_id)) {
-        boletosMap.set(reserva.boleto.boleto_id, reserva.boleto);
+      if (reserva.boleto_id) {
+        const boleto = await this.boletoRepository.findOne({
+          where: { boleto_id: reserva.boleto_id },
+          relations: ['reservas', 'reservas.asiento']
+        });
+        if (boleto) {
+          boletos.push(boleto);
+        }
       }
     }
-    const boletos = Array.from(boletosMap.values());
 
     if (!boletos.length) {
       throw new NotFoundException(`No se encontraron boletos para las reservas del usuario con ID ${userId}`);
