@@ -587,7 +587,7 @@ export class ReservaService {
         boleto_id: reserva.boleto_id,
         reservaId: reserva.reserva_id,
         usuarioId: reserva.usuario_id,
-        cooperativaId: '1' // Valor fijo como especificado
+        cooperativaId: 'b6e8c8a2-1234-4f8e-9a2b-123456789abc' // <-- UUID real
       });
     }
   }
@@ -609,7 +609,7 @@ export class ReservaService {
           boleto_id: boleto.boleto_id,
           reservaId: reserva.reserva_id,
           usuarioId: reserva.usuario_id,
-          cooperativaId: '1'
+          cooperativaId: 'b6e8c8a2-1234-4f8e-9a2b-123456789abc'
         });
         break; // Solo necesitamos actualizar una vez
       }
