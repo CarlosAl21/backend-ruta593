@@ -5,7 +5,7 @@ export const CloudinaryProvider = {
     useFactory: () =>{
         return cloudinary.config(
             {
-                cloud_name: 'g4to',
+                cloud_name: 'dvqf8smev',
                 api_key: '635562132924635',
                 api_secret: 'r31WQh8N5_2OV3D54ria-l_AKeo'
             }
