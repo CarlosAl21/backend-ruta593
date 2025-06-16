@@ -8,6 +8,7 @@ import * as QRCode from 'qrcode';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { EstadoReserva } from '../common/enums/reserva.enum';
 import { EstadoBoleto } from 'src/common/enums/boletos.enum';
+import { Reserva } from 'src/reserva/entities/reserva.entity';
 
 @Injectable()
 export class BoletosService {
@@ -15,7 +16,9 @@ export class BoletosService {
   constructor(
     @InjectRepository(Boleto)
     private readonly boletoRepository: Repository<Boleto>,
-    private readonly cloudinaryService: CloudinaryService
+    private readonly cloudinaryService: CloudinaryService,
+    @InjectRepository(Reserva)
+    private readonly reservaRepository: Repository<Reserva>
   ){}
 
   async create(createBoletoDto: CreateBoletoDto) {
@@ -49,15 +52,16 @@ export class BoletosService {
   }
 
   async findAllByUserId(userId: string) {
-    const boletos = await this.boletoRepository
-      .createQueryBuilder('boleto')
-      .innerJoinAndSelect('boleto.reservas', 'reserva')
-      .where('reserva.usuario_id = :userId', { userId })
-      .orderBy('boleto.fecha_emision', 'DESC')
-      .getMany();
-
+    const reservas = await this.reservaRepository.find({
+      where: { usuario_id: userId, estado: EstadoReserva.CONFIRMADA },
+      relations: ['boleto']
+    });
+    if (!reservas.length) {
+      throw new NotFoundException(`No se encontraron reservas confirmadas para el usuario con ID ${userId}`);
+    }
+    const boletos = reservas.map(reserva => reserva.boleto).filter(boleto => boleto !== null);
     if (!boletos.length) {
-      throw new NotFoundException(`No se encontraron boletos para el usuario con ID ${userId}`);
+      throw new NotFoundException(`No se encontraron boletos para las reservas del usuario con ID ${userId}`);
     }
 
     return boletos;
