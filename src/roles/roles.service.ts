@@ -21,15 +21,15 @@ export class RolesService {
     return this.roleRepository.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.roleRepository.findOneBy({ id });
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
+  update(id: string, updateRoleDto: UpdateRoleDto) {
     return this.roleRepository.update(id, updateRoleDto);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.roleRepository.delete(id);
   }
 }
