@@ -48,7 +48,7 @@ export class BoletosService {
     return boletos;
   }
 
-  async findAllByUserId(userId: number) {
+  async findAllByUserId(userId: string) {
     const boletos = await this.boletoRepository
       .createQueryBuilder('boleto')
       .innerJoinAndSelect('boleto.reservas', 'reserva')
@@ -74,7 +74,7 @@ export class BoletosService {
     return boleto;
   }
 
-  async findByReservaId(reservaId: number) {
+  async findByReservaId(reservaId: string) {
     const boleto = await this.boletoRepository
       .createQueryBuilder('boleto')
       .innerJoinAndSelect('boleto.reservas', 'reserva')

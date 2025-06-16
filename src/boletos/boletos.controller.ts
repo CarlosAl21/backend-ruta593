@@ -44,7 +44,7 @@ export class BoletosController {
   })
   @Get('usuario/:userId')
   findAllByUserId(@Param('userId') userId: string) {
-    return this.boletosService.findAllByUserId(+userId);
+    return this.boletosService.findAllByUserId(userId);
   }
 
   @ApiOperation({ summary: 'Obtener un boleto por UID' })
@@ -80,7 +80,7 @@ export class BoletosController {
   })
   @Get('reserva/:reservaId')
   findByReservaId(@Param('reservaId') reservaId: string) {
-    return this.boletosService.findByReservaId(+reservaId);
+    return this.boletosService.findByReservaId(reservaId);
   }
 
   @ApiOperation({ summary: 'Actualizar un boleto' })
