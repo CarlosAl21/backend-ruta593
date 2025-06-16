@@ -4,6 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { runSeeds } from './common/seeds/seed';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
