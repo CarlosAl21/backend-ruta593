@@ -1,7 +1,7 @@
+import { Reserva } from 'src/reserva/entities/reserva.entity';
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Reserva } from './entities/reserva.entity';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
 import { User } from '../user/entities/user.entity';
@@ -84,7 +84,7 @@ export class ReservaService {
     const reservaGuardada = await this.reservaRepository.save(reserva);
 
     if (reservaGuardada.boleto_id) {
-      await this.actualizarBoleto(reservaGuardada.boleto_id);
+      await this.actualizarBoleto(reservaGuardada);
     }
 
     // Llamar a actualizarAsientosOcupados si la reserva tiene viaje asociado
@@ -138,7 +138,7 @@ export class ReservaService {
     const reservaActualizada = await this.reservaRepository.save(reserva);
 
     if (reservaActualizada.boleto_id) {
-      await this.actualizarBoleto(reservaActualizada.boleto_id);
+      await this.actualizarBoleto(reservaActualizada);
     }
 
     await this.actualizarFactura(reservaActualizada.boleto_id);
@@ -319,16 +319,16 @@ export class ReservaService {
     return reserva;
   }
 
-  async actualizarBoleto(boletoId: string): Promise<void> {
+  async actualizarBoleto(reserva: Reserva): Promise<void> {
     const boleto = await this.boletoRepository.findOne({
-      where: { boleto_id: boletoId },
+      where: { boleto_id: reserva.boleto_id },
       relations: ['reservas']
     });
 
     if (!boleto) return;
 
-    const numerosAsientos = await this.obtenerNumerosAsientos(boleto.reservas);
-    const hayReservaPorDeposito = this.tieneReservaPorDeposito(boleto.reservas);
+    const numerosAsientos = await this.obtenerNumerosAsientos(reserva);
+    const hayReservaPorDeposito = this.tieneReservaPorDeposito(reserva);
 
     const qrData = await this.generarQRData(boleto, numerosAsientos, hayReservaPorDeposito);
     const uploadResult = await this.generarYSubirQR(qrData);
@@ -382,8 +382,9 @@ export class ReservaService {
     return this.cloudinaryService.uploadBuffer(qrBuffer, 'boletos');
   }
 
-  private tieneReservaPorDeposito(reservas: Reserva[]): boolean {
-    return reservas.some(reserva => reserva.metodo_pago === MetodoPago.DEPOSITO);
+  private tieneReservaPorDeposito(reservas: Reserva[] | Reserva): boolean {
+    const reservasArray = Array.isArray(reservas) ? reservas : [reservas];
+    return reservasArray.some(reserva => reserva.metodo_pago === MetodoPago.DEPOSITO);
   }
 
   private async actualizarDatosBoleto(
@@ -456,9 +457,10 @@ export class ReservaService {
     return tipoAsiento === Asientos.VIP ? precioBase * 1.4 : precioBase;
   }
 
-  private async obtenerNumerosAsientos(reservas: Reserva[]): Promise<string> {
+  private async obtenerNumerosAsientos(reservas: Reserva[] | Reserva): Promise<string> {
+    const reservasArray = Array.isArray(reservas) ? reservas : [reservas];
     const numerosAsientos = await Promise.all(
-      reservas.map(async reserva => {
+      reservasArray.map(async reserva => {
         const asiento = await this.asientoRepository.findOne({
           where: { asiento_id: reserva.asiento_id }
         });
@@ -587,7 +589,7 @@ export class ReservaService {
         boleto_id: reserva.boleto_id,
         reservaId: reserva.reserva_id,
         usuarioId: reserva.usuario_id,
-        cooperativaId: '1' // Valor fijo como especificado
+        cooperativaId: '08830afc-a0ac-4e78-b421-cabffa6e1f85' // <-- UUID real
       });
     }
   }
@@ -609,7 +611,7 @@ export class ReservaService {
           boleto_id: boleto.boleto_id,
           reservaId: reserva.reserva_id,
           usuarioId: reserva.usuario_id,
-          cooperativaId: '1'
+          cooperativaId: '08830afc-a0ac-4e78-b421-cabffa6e1f85'
         });
         break; // Solo necesitamos actualizar una vez
       }
