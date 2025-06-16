@@ -368,10 +368,10 @@ export class ReservaService {
     );
 
     return {
-      total: boleto.reservas.reduce((sum, reserva) => sum + reserva.precio, 0),
-      cantidad_asientos: boleto.reservas.length,
+      cantidad_asientos: boleto.asientos.split(',').length,
+      total: boleto.total,
       estado: hayReservaPorDeposito ? EstadoBoleto.PENDIENTE : EstadoBoleto.PAGADO,
-      asientos,
+      asientos: asientos,
       mensaje: hayReservaPorDeposito ? 'NO VÁLIDO - PENDIENTE DE PAGO' : 
                esPagoPresencial ? 'VÁLIDO - PAGO PRESENCIAL/PAYPAL' : undefined
     };
