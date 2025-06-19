@@ -368,10 +368,10 @@ export class ReservaService {
     );
 
     return {
-      total: boleto.reservas.reduce((sum, reserva) => sum + reserva.precio, 0),
-      cantidad_asientos: boleto.reservas.length,
+      cantidad_asientos: boleto.asientos.split(',').length,
+      total: boleto.total,
       estado: hayReservaPorDeposito ? EstadoBoleto.PENDIENTE : EstadoBoleto.PAGADO,
-      asientos,
+      asientos: asientos,
       mensaje: hayReservaPorDeposito ? 'NO VÁLIDO - PENDIENTE DE PAGO' : 
                esPagoPresencial ? 'VÁLIDO - PAGO PRESENCIAL/PAYPAL' : undefined
     };
@@ -393,15 +393,15 @@ export class ReservaService {
     hayReservaPorDeposito: boolean,
     urlImagenQR: string
   ): Promise<void> {
-    Object.assign(boleto, {
-      asientos,
-      cantidad_asientos: boleto.reservas.length,
-      total: boleto.reservas.reduce((sum, reserva) => sum + reserva.precio, 0),
+    const actualizado = this.boletoRepository.merge(boleto, {
+      asientos: asientos,
+      cantidad_asientos: boleto.asientos.split(',').length,
+      total: boleto.total,
       estado: hayReservaPorDeposito ? EstadoBoleto.PENDIENTE : EstadoBoleto.PAGADO,
       url_imagen_qr: urlImagenQR
     });
 
-    await this.boletoRepository.save(boleto);
+    await this.boletoRepository.save(actualizado);
   }
 
   private async findUserById(userId: string): Promise<User> {
