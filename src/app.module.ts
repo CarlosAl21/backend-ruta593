@@ -20,6 +20,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ViajesModule } from './viajes/viajes.module';
 import { DescuentosModule } from './descuentos/descuentos.module';
+import { EstructuraBusesModule } from './estructura_buses/estructura_buses.module';
+
 
 @Module({
   imports: [
@@ -56,6 +58,7 @@ import { DescuentosModule } from './descuentos/descuentos.module';
     FacturaModule,
     ViajesModule,
     DescuentosModule,
+    EstructuraBusesModule
   ],
   controllers: [AppController],
   providers: [AppService],
