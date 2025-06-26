@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { BoletosService } from './boletos.service';
 import { CreateBoletoDto } from './dto/create-boleto.dto';
 import { UpdateBoletoDto } from './dto/update-boleto.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('Boletos')
 @Controller('boletos')
@@ -10,10 +10,15 @@ export class BoletosController {
   constructor(private readonly boletosService: BoletosService) {}
 
   @ApiOperation({ summary: 'Crear un nuevo boleto' })
+  @ApiBody({ type: CreateBoletoDto })
   @ApiResponse({ 
     status: 201, 
     description: 'Boleto creado exitosamente',
     type: CreateBoletoDto
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'Datos inválidos para crear el boleto'
   })
   @Post()
   create(@Body() createBoletoDto: CreateBoletoDto) {
@@ -35,23 +40,29 @@ export class BoletosController {
   @ApiParam({ 
     name: 'userId', 
     description: 'ID del usuario',
-    type: 'number'
+    type: String,
+    required: true
   })
   @ApiResponse({ 
     status: 200, 
     description: 'Lista de boletos del usuario',
     type: [CreateBoletoDto]
   })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'No se encontraron boletos para el usuario'
+  })
   @Get('usuario/:userId')
   findAllByUserId(@Param('userId') userId: string) {
-    return this.boletosService.findAllByUserId(+userId);
+    return this.boletosService.findAllByUserId(userId);
   }
 
   @ApiOperation({ summary: 'Obtener un boleto por UID' })
   @ApiParam({ 
     name: 'uid', 
     description: 'UID del boleto',
-    type: 'string'
+    type: String,
+    required: true
   })
   @ApiResponse({ 
     status: 200, 
@@ -71,24 +82,31 @@ export class BoletosController {
   @ApiParam({ 
     name: 'reservaId', 
     description: 'ID de la reserva',
-    type: 'number'
+    type: String,
+    required: true
   })
   @ApiResponse({ 
     status: 200, 
     description: 'Lista de boletos de la reserva',
     type: [CreateBoletoDto]
   })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'No se encontraron boletos para la reserva'
+  })
   @Get('reserva/:reservaId')
   findByReservaId(@Param('reservaId') reservaId: string) {
-    return this.boletosService.findByReservaId(+reservaId);
+    return this.boletosService.findByReservaId(reservaId);
   }
 
   @ApiOperation({ summary: 'Actualizar un boleto' })
   @ApiParam({ 
     name: 'uid', 
     description: 'UID del boleto a actualizar',
-    type: 'string'
+    type: String,
+    required: true
   })
+  @ApiBody({ type: UpdateBoletoDto })
   @ApiResponse({ 
     status: 200, 
     description: 'Boleto actualizado exitosamente',
@@ -107,7 +125,8 @@ export class BoletosController {
   @ApiParam({ 
     name: 'uid', 
     description: 'UID del boleto a eliminar',
-    type: 'string'
+    type: String,
+    required: true
   })
   @ApiResponse({ 
     status: 200, 

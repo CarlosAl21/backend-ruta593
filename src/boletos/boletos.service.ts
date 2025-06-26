@@ -8,6 +8,7 @@ import * as QRCode from 'qrcode';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { EstadoReserva } from '../common/enums/reserva.enum';
 import { EstadoBoleto } from 'src/common/enums/boletos.enum';
+import { Reserva } from 'src/reserva/entities/reserva.entity';
 
 @Injectable()
 export class BoletosService {
@@ -15,7 +16,9 @@ export class BoletosService {
   constructor(
     @InjectRepository(Boleto)
     private readonly boletoRepository: Repository<Boleto>,
-    private readonly cloudinaryService: CloudinaryService
+    private readonly cloudinaryService: CloudinaryService,
+    @InjectRepository(Reserva)
+    private readonly reservaRepository: Repository<Reserva>
   ){}
 
   async create(createBoletoDto: CreateBoletoDto) {
@@ -48,16 +51,32 @@ export class BoletosService {
     return boletos;
   }
 
-  async findAllByUserId(userId: number) {
-    const boletos = await this.boletoRepository
-      .createQueryBuilder('boleto')
-      .innerJoinAndSelect('boleto.reservas', 'reserva')
-      .where('reserva.usuario_id = :userId', { userId })
-      .orderBy('boleto.fecha_emision', 'DESC')
-      .getMany();
+  async findAllByUserId(userId: string) {
+    // Buscar todas las reservas confirmadas del usuario
+    const reservas = await this.reservaRepository.find({
+      where: { usuario_id: userId, estado: EstadoReserva.CONFIRMADA }
+    });
+
+    if (!reservas.length) {
+      throw new NotFoundException(`No se encontraron reservas confirmadas para el usuario con ID ${userId}`);
+    }
+
+    // Buscar y guardar todos los boletos asociados a las reservas
+    const boletos: Boleto[] = [];
+    for (const reserva of reservas) {
+      if (reserva.boleto_id) {
+        const boleto = await this.boletoRepository.findOne({
+          where: { boleto_id: reserva.boleto_id },
+          relations: ['reservas', 'reservas.asiento']
+        });
+        if (boleto) {
+          boletos.push(boleto);
+        }
+      }
+    }
 
     if (!boletos.length) {
-      throw new NotFoundException(`No se encontraron boletos para el usuario con ID ${userId}`);
+      throw new NotFoundException(`No se encontraron boletos para las reservas del usuario con ID ${userId}`);
     }
 
     return boletos;
@@ -74,7 +93,7 @@ export class BoletosService {
     return boleto;
   }
 
-  async findByReservaId(reservaId: number) {
+  async findByReservaId(reservaId: string) {
     const boleto = await this.boletoRepository
       .createQueryBuilder('boleto')
       .innerJoinAndSelect('boleto.reservas', 'reserva')
