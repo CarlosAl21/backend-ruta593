@@ -51,6 +51,11 @@ import { TipoAsiento } from './tipos_asientos/entidades/tipo_asiento.entity';
 import { EstructuraBus } from './estructura_buses/entidades/estructura_bus.entity';
 import { EstacionCooperativa } from './estacion_cooperativa/entidades/estacion_cooperativa.entity';
 import { ClienteCooperativa } from './clientes_cooperativas/entidades/cliente_cooperativa.entity';
+import { EstructuraBusesModule } from './estructura_buses/estructura_buses.module';
+import { TerminalesModule } from './terminales/terminales.module';
+import { ParadasIntermediasModule } from './paradas_intermedias/paradas_intermedias.module';
+import { ProvinciasModule } from './provincias/provincias.module';
+import { CiudadesModule } from './ciudades/ciudades.module';
 
 @Module({
   imports: [
@@ -120,6 +125,11 @@ import { ClienteCooperativa } from './clientes_cooperativas/entidades/cliente_co
     ViajesModule,
     DescuentosModule,
     ClientesCooperativasModule,
+    EstructuraBusesModule,
+    TerminalesModule,
+    ParadasIntermediasModule,
+    ProvinciasModule,
+    CiudadesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
