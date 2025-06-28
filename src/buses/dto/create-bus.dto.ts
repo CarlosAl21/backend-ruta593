@@ -1,7 +1,9 @@
 import { Type } from "class-transformer";
-import { IsNumber, IsString, IsOptional } from "class-validator";
+import { IsNumber, IsString, IsOptional, IsNotEmpty } from "class-validator";
 import { IsAEcuadorianLicensePlate } from "src/common/decorators/placa.validator";
 import { ApiProperty } from "@nestjs/swagger";
+import { DeepPartial } from "typeorm";
+import { EstructuraBus } from "src/estructura_buses/entidades/estructura_bus.entity";
 
 export class CreateBusDto {
     @ApiProperty({
@@ -65,4 +67,13 @@ export class CreateBusDto {
     })
     @IsOptional()
     files?: Express.Multer.File[];
+
+    @IsNotEmpty({message: "El ID de la estructura del bus no puede estar vacío"})
+    @ApiProperty({
+        description: 'ID de la estructura del bus',
+        example: '123e4567-e89b-12d3-a456-426614174000',
+        type: String
+    })
+    @IsString({message: "El ID de la estructura del bus debe ser una cadena de texto"})
+    id_estructura_bus: DeepPartial<EstructuraBus>;
 }

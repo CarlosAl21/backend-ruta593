@@ -21,15 +21,15 @@ export class EstructuraBusesService {
     return this.repo.find();
   }
 
-  buscarUno(id: number) {
+  buscarUno(id: string) {
     return this.repo.findOneBy({ id });
   }
 
-  actualizar(id: number, dto: ActualizarEstructuraBusDto) {
+  actualizar(id: string, dto: ActualizarEstructuraBusDto) {
     return this.repo.update(id, dto);
   }
 
-  eliminar(id: number) {
+  eliminar(id: string) {
     return this.repo.delete(id);
   }
 }

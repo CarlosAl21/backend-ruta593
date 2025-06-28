@@ -1,7 +1,8 @@
-import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { BusesFoto } from "src/buses-fotos/entities/buses-foto.entity";
 import { Asiento } from "src/asientos/entities/asiento.entity";
 import { Frecuencia } from '../../frecuencias/entities/frecuencia.entity';
+import { EstructuraBus } from "src/estructura_buses/entidades/estructura_bus.entity";
 
 @Entity()
 export class Bus {
@@ -43,4 +44,11 @@ export class Bus {
 
     @OneToMany(() => Frecuencia, frecuencia => frecuencia.bus)
     frecuencias: Frecuencia[];
+
+    @ManyToOne(() => EstructuraBus, estructuraBus => estructuraBus.buses, {
+        eager: true,
+        nullable: false
+    })
+    @JoinColumn({ name: 'id_estructura_bus' })
+    id_estructura_bus: EstructuraBus;
 }
