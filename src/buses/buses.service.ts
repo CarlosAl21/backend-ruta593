@@ -11,7 +11,6 @@ import { Asientos } from 'src/common/enums/asientos.enum';
 
 @Injectable()
 export class BusesService {
-  
   constructor(
     @InjectRepository(Bus)
     private readonly busRepository: Repository<Bus>,
@@ -19,18 +18,18 @@ export class BusesService {
     private readonly busesFotoRepository: Repository<BusesFoto>,
     @InjectRepository(Asiento)
     private readonly asientoRepository: Repository<Asiento>,
-    private readonly cloudinaryService: CloudinaryService
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   private async createAsientos(bus: Bus) {
     let numeroAsiento = 1;
-    
+
     // Crear asientos normales
     for (let i = 0; i < bus.total_asientos_normales; i++) {
       await this.asientoRepository.save({
         tipo_asiento: Asientos.NORMAL,
         numero_asiento: numeroAsiento++,
-        bus: bus
+        bus: bus,
       });
     }
 
@@ -39,34 +38,43 @@ export class BusesService {
       await this.asientoRepository.save({
         tipo_asiento: Asientos.VIP,
         numero_asiento: numeroAsiento++,
-        bus: bus
+        bus: bus,
       });
     }
   }
 
-  private async updateAsientos(bus: Bus, newTotalNormales: number, newTotalVip: number) {
+  private async updateAsientos(
+    bus: Bus,
+    newTotalNormales: number,
+    newTotalVip: number,
+  ) {
     // Obtener todos los asientos actuales del bus
     const asientosActuales = await this.asientoRepository.find({
       where: { bus: { bus_id: bus.bus_id } },
-      order: { numero_asiento: 'ASC' }
+      order: { numero_asiento: 'ASC' },
     });
 
-    const asientosNormales = asientosActuales.filter(a => a.tipo_asiento === Asientos.NORMAL);
-    const asientosVip = asientosActuales.filter(a => a.tipo_asiento === Asientos.VIP);
+    const asientosNormales = asientosActuales.filter(
+      (a) => a.tipo_asiento === Asientos.NORMAL,
+    );
+    const asientosVip = asientosActuales.filter(
+      (a) => a.tipo_asiento === Asientos.VIP,
+    );
 
     // Manejar asientos normales
     if (newTotalNormales > asientosNormales.length) {
       // Agregar nuevos asientos normales
-      const numeroInicio = asientosNormales.length > 0 
-        ? Math.max(...asientosNormales.map(a => a.numero_asiento)) + 1 
-        : 1;
-      
-      for (let i = 0; i < (newTotalNormales - asientosNormales.length); i++) {
+      const numeroInicio =
+        asientosNormales.length > 0
+          ? Math.max(...asientosNormales.map((a) => a.numero_asiento)) + 1
+          : 1;
+
+      for (let i = 0; i < newTotalNormales - asientosNormales.length; i++) {
         await this.asientoRepository.save({
           tipo_asiento: Asientos.NORMAL,
           numero_asiento: numeroInicio + i,
           bus: bus,
-          activo: true
+          activo: true,
         });
       }
     } else if (newTotalNormales < asientosNormales.length) {
@@ -78,16 +86,17 @@ export class BusesService {
     // Manejar asientos VIP
     if (newTotalVip > asientosVip.length) {
       // Agregar nuevos asientos VIP
-      const numeroInicio = asientosActuales.length > 0 
-        ? Math.max(...asientosActuales.map(a => a.numero_asiento)) + 1 
-        : 1;
-      
-      for (let i = 0; i < (newTotalVip - asientosVip.length); i++) {
+      const numeroInicio =
+        asientosActuales.length > 0
+          ? Math.max(...asientosActuales.map((a) => a.numero_asiento)) + 1
+          : 1;
+
+      for (let i = 0; i < newTotalVip - asientosVip.length; i++) {
         await this.asientoRepository.save({
           tipo_asiento: Asientos.VIP,
           numero_asiento: numeroInicio + i,
           bus: bus,
-          activo: true
+          activo: true,
         });
       }
     } else if (newTotalVip < asientosVip.length) {
@@ -99,7 +108,7 @@ export class BusesService {
     // Renumerar todos los asientos para mantener la secuencia
     const todosLosAsientos = await this.asientoRepository.find({
       where: { bus: { bus_id: bus.bus_id } },
-      order: { tipo_asiento: 'ASC', numero_asiento: 'ASC' }
+      order: { tipo_asiento: 'ASC', numero_asiento: 'ASC' },
     });
 
     let numeroAsiento = 1;
@@ -110,6 +119,14 @@ export class BusesService {
   }
 
   async create(createBusDto: CreateBusDto, files?: Express.Multer.File[]) {
+    // Normalizar el campo id_estructura_bus
+    if (
+      typeof createBusDto.id_estructura_bus === 'object' &&
+      createBusDto.id_estructura_bus?.id
+    ) {
+      createBusDto.id_estructura_bus = createBusDto.id_estructura_bus;
+    }
+
     const bus = await this.findOneByPlaca(createBusDto.placa);
     if (bus) {
       throw new ConflictException('Ya existe un bus con esa placa');
@@ -123,15 +140,17 @@ export class BusesService {
 
     // Si hay archivos, subirlos a Cloudinary y crear los registros de fotos
     if (files && files.length > 0) {
-      const uploadPromises = files.map(file => this.cloudinaryService.upload(file));
+      const uploadPromises = files.map((file) =>
+        this.cloudinaryService.upload(file),
+      );
       const uploadResults = await Promise.all(uploadPromises);
 
-      const fotosPromises = uploadResults.map(result => 
+      const fotosPromises = uploadResults.map((result) =>
         this.busesFotoRepository.save({
           url: result.secure_url,
           public_id: result.public_id,
-          bus_id: newBus.bus_id
-        })
+          bus_id: newBus.bus_id,
+        }),
       );
 
       await Promise.all(fotosPromises);
@@ -143,9 +162,9 @@ export class BusesService {
 
   findAll() {
     return this.busRepository.find({
-      relations:{
-        fotos: true
-      }
+      relations: {
+        fotos: true,
+      },
     });
   }
 
@@ -153,8 +172,8 @@ export class BusesService {
     return this.busRepository.findOne({
       where: { placa },
       relations: {
-        fotos: true
-      }
+        fotos: true,
+      },
     });
   }
 
@@ -162,8 +181,8 @@ export class BusesService {
     const bus = await this.busRepository.findOne({
       where: { placa },
       relations: {
-        fotos: true
-      }
+        fotos: true,
+      },
     });
     if (!bus) {
       throw new ConflictException('El bus no existe');
@@ -175,8 +194,8 @@ export class BusesService {
     return this.busRepository.findOne({
       where: { bus_id: uid },
       relations: {
-        fotos: true
-      }
+        fotos: true,
+      },
     });
   }
 
@@ -192,29 +211,32 @@ export class BusesService {
     }
 
     // Si cambiaron la cantidad de asientos, actualizarlos
-    if (updateBusDto.total_asientos_normales !== undefined || 
-        updateBusDto.total_asientos_vip !== undefined) {
-      
-      const newTotalNormales = updateBusDto.total_asientos_normales ?? bus.total_asientos_normales;
-      const newTotalVip = updateBusDto.total_asientos_vip ?? bus.total_asientos_vip;
-      
+    if (
+      updateBusDto.total_asientos_normales !== undefined ||
+      updateBusDto.total_asientos_vip !== undefined
+    ) {
+      const newTotalNormales =
+        updateBusDto.total_asientos_normales ?? bus.total_asientos_normales;
+      const newTotalVip =
+        updateBusDto.total_asientos_vip ?? bus.total_asientos_vip;
+
       await this.updateAsientos(bus, newTotalNormales, newTotalVip);
     }
 
     await this.busRepository.update(id, updateBusDto);
-    return { message: "Bus Actualizado" };
+    return { message: 'Bus Actualizado' };
   }
   //Si un bus no esta activo no se puede asignar a una frecuencia
 
   async remove(id: string) {
-    const bus = await this.busRepository.findOneBy({bus_id: id});
+    const bus = await this.busRepository.findOneBy({ bus_id: id });
     if (!bus) {
       throw new ConflictException('El bus no existe');
     }
 
     await this.busRepository.delete({
-      bus_id: id
+      bus_id: id,
     });
-    return {message: "Bus Eliminado"};
+    return { message: 'Bus Eliminado' };
   }
 }

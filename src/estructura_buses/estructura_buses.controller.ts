@@ -28,7 +28,7 @@ export class EstructuraBusesController {
   @ApiOperation({ summary: 'Obtener una estructura de bus por ID' })
   @ApiParam({ name: 'id', description: 'ID de la estructura de bus' })
   @ApiResponse({ status: 200, description: 'Estructura de bus encontrada.' })
-  buscarUno(@Param('id') id: number) {
+  buscarUno(@Param('id') id: string) {
     return this.service.buscarUno(id);
   }
 
@@ -37,7 +37,7 @@ export class EstructuraBusesController {
   @ApiParam({ name: 'id', description: 'ID de la estructura de bus' })
   @ApiBody({ type: ActualizarEstructuraBusDto })
   @ApiResponse({ status: 200, description: 'Estructura de bus actualizada.' })
-  actualizar(@Param('id') id: number, @Body() dto: ActualizarEstructuraBusDto) {
+  actualizar(@Param('id') id: string, @Body() dto: ActualizarEstructuraBusDto) {
     return this.service.actualizar(id, dto);
   }
 
@@ -45,7 +45,7 @@ export class EstructuraBusesController {
   @ApiOperation({ summary: 'Eliminar una estructura de bus por ID' })
   @ApiParam({ name: 'id', description: 'ID de la estructura de bus' })
   @ApiResponse({ status: 200, description: 'Estructura de bus eliminada.' })
-  eliminar(@Param('id') id: number) {
+  eliminar(@Param('id') id: string) {
     return this.service.eliminar(id);
   }
 }
