@@ -46,9 +46,10 @@ export class AuthService {
     async profile(
         {correo: email}: ActiveUserInterface
     ){
-        const {usuario_id, rol, correo, primer_nombre, primer_apellido} = await this.userService.findOneByEmail(email);
+        const {usuario_id, rol, correo, primer_nombre, primer_apellido, identificacion} = await this.userService.findOneByEmail(email);
         return {
             usuario_id,
+            identificacion,
             rol,
             correo,
             primer_nombre,
