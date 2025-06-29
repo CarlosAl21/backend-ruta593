@@ -22,12 +22,26 @@ export class BoletosService {
   ){}
 
   async create(createBoletoDto: CreateBoletoDto) {
-    // Generar datos para el QR
+    // Guardar el boleto primero para obtener el ID (si es necesario)
+    const boleto = this.boletoRepository.create(createBoletoDto);
+    const boletoGuardado = await this.boletoRepository.save(boleto);
+
+    // Buscar las reservas asociadas a este boleto
+    const reservas = await this.reservaRepository.find({
+      where: { boleto_id: boletoGuardado.boleto_id },
+      relations: ['asiento']
+    });
+
+    // Obtener los IDs de los asientos
+    const asientoIds = reservas.map(reserva => reserva.asiento?.asiento_id).filter(Boolean);
+
+    // Generar datos para el QR, incluyendo el array de IDs de asientos
     const qrData = {
-      total: createBoletoDto.total ,
-      cantidad_asientos: createBoletoDto.cantidad_asientos,
-      estado: createBoletoDto.estado,
-      asientos: createBoletoDto.asientos 
+      total: boletoGuardado.total,
+      cantidad_asientos: boletoGuardado.cantidad_asientos,
+      estado: boletoGuardado.estado,
+      asientos: boletoGuardado.asientos,
+      asiento_ids: asientoIds
     };
 
     // Generar QR como Buffer
@@ -36,11 +50,11 @@ export class BoletosService {
     // Subir el QR a Cloudinary
     const uploadResult = await this.cloudinaryService.uploadBuffer(qrBuffer, 'boletos');
 
-    // Asignar la URL del QR al DTO
-    createBoletoDto.url_imagen_qr = uploadResult.secure_url;
+    // Actualizar la URL del QR en el boleto
+    boletoGuardado.url_imagen_qr = uploadResult.secure_url;
+    await this.boletoRepository.save(boletoGuardado);
 
-    // Guardar el boleto con la URL del QR
-    return this.boletoRepository.save(createBoletoDto);
+    return boletoGuardado;
   }
 
   async findAll() {
