@@ -1,182 +1,304 @@
-# Sistema de Reserva de Buses
+# 🚌 Sistema de Gestión de Buses - Ruta593
 
-Este proyecto es un sistema de reserva de pasajes de bus desarrollado con NestJS. El sistema permite a los usuarios realizar reservas de asientos y gestionar pagos para una cooperativa de transporte específica.
+Sistema completo de gestión de transporte público desarrollado con **NestJS** que permite la administración integral de cooperativas de buses, incluyendo reservas, pagos, gestión de flota y generación de documentación.
 
-## Características Principales 
+## 📋 Descripción del Proyecto
 
-- Autenticación de usuarios
-- Gestión de usuarios
-- Gestión de buses, frecuencias, rutas y paradas
-- Reserva de asientos
-- Sistema de pagos con múltiples métodos (PayPal, Depósito, Presencial)
-- Carga de imagenes de buses, y comprobantes de pago
-- Generación de boletos y facturas, ademas de códigos QR
-- Envio de emails de reserva y cancelación
-- Documentación API con Swagger
+Este proyecto es una **API REST** robusta para la gestión completa de una cooperativa de transporte público. El sistema maneja desde la administración de usuarios y buses hasta la generación de boletos y facturas, incluyendo un sistema de pagos integrado y notificaciones por email.
 
-## Pre-requisitos 
+### 🎯 Características Principales
 
-- Node.js (v20 o superior)
-- NestJS
-- MySQL
-- pnpm
+- 🔐 **Autenticación y Autorización** con JWT y roles
+- 👥 **Gestión de Usuarios** (administradores, clientes, cooperativas)
+- 🚌 **Gestión de Flota** (buses, asientos, estructuras)
+- 🛣️ **Gestión de Rutas** (paradas, frecuencias, viajes)
+- 🎫 **Sistema de Reservas** con asignación de asientos
+- 💳 **Múltiples Métodos de Pago** (PayPal, Depósito, Presencial)
+- 📄 **Generación de Documentos** (boletos, facturas, códigos QR)
+- 📧 **Notificaciones por Email** (confirmaciones, cancelaciones)
+- ☁️ **Almacenamiento en la Nube** (Cloudinary para imágenes y PDFs)
+- 📚 **Documentación API** con Swagger
+- 🧪 **Sistema de Pruebas** integrado
 
-### Instalación de pnpm
+## 🏗️ Estructura de Carpetas
 
-Si no tienes pnpm instalado, puedes instalarlo de las siguientes maneras:
+```
+backend-ruta593-develop/
+├── 📁 src/
+│   ├── 📁 administradores/          # Gestión de administradores del sistema
+│   ├── 📁 asientos/                 # Gestión de asientos de buses
+│   ├── 📁 auth/                     # Autenticación y autorización
+│   │   ├── 📁 decorators/           # Decoradores personalizados
+│   │   ├── 📁 dto/                  # Data Transfer Objects
+│   │   └── 📁 guards/               # Guards de seguridad
+│   ├── 📁 boletos/                  # Generación y gestión de boletos
+│   ├── 📁 buses/                    # Gestión de flota de buses
+│   ├── 📁 buses-fotos/              # Gestión de fotos de buses
+│   ├── 📁 ciudades/                 # Gestión de ciudades
+│   ├── 📁 clientes/                 # Gestión de clientes
+│   ├── 📁 clientes_cooperativas/    # Gestión de clientes por cooperativa
+│   ├── 📁 cloudinary/               # Integración con Cloudinary
+│   ├── 📁 common/                   # Utilidades compartidas
+│   │   ├── 📁 decorators/           # Decoradores comunes
+│   │   ├── 📁 enums/                # Enumeraciones del sistema
+│   │   ├── 📁 interfaces/           # Interfaces TypeScript
+│   │   ├── 📁 seeds/                # Datos iniciales
+│   │   └── 📁 utils/                # Utilidades generales
+│   ├── 📁 comprobantes_pagos/       # Gestión de comprobantes
+│   ├── 📁 cooperativa/              # Gestión de cooperativas
+│   ├── 📁 descuentos/               # Sistema de descuentos
+│   ├── 📁 estacion_cooperativa/     # Gestión de estaciones
+│   ├── 📁 estado_asientos/          # Estados de asientos
+│   ├── 📁 estructura_buses/         # Estructuras de buses
+│   ├── 📁 factura/                  # Generación de facturas
+│   ├── 📁 frecuencias/              # Gestión de frecuencias
+│   ├── 📁 mail/                     # Sistema de emails
+│   │   └── 📁 templates/            # Plantillas de email
+│   ├── 📁 metodos_pago/             # Métodos de pago disponibles
+│   ├── 📁 pagos/                    # Gestión de pagos
+│   ├── 📁 paradas/                  # Gestión de paradas
+│   ├── 📁 paradas_intermedias/      # Paradas intermedias
+│   ├── 📁 provincias/               # Gestión de provincias
+│   ├── 📁 reserva/                  # Sistema de reservas
+│   ├── 📁 roles/                    # Gestión de roles
+│   ├── 📁 rutas/                    # Gestión de rutas
+│   ├── 📁 serial_estacion/          # Seriales de estaciones
+│   ├── 📁 terminales/               # Gestión de terminales
+│   ├── 📁 tipos_asientos/           # Tipos de asientos
+│   ├── 📁 user/                     # Gestión de usuarios
+│   ├── 📁 utils/                    # Utilidades adicionales
+│   ├── 📁 viajes/                   # Gestión de viajes
+│   ├── 📄 app.controller.ts         # Controlador principal
+│   ├── 📄 app.module.ts             # Módulo principal
+│   ├── 📄 app.service.ts            # Servicio principal
+│   └── 📄 main.ts                   # Punto de entrada
+├── 📁 test/                         # Pruebas unitarias
+├── 📁 tests/                        # Archivos de prueba HTTP
+├── 📁 uploads/                      # Archivos subidos temporalmente
+├── 📄 .prettierrc                   # Configuración de Prettier
+├── 📄 package.json                  # Dependencias y scripts
+├── 📄 tsconfig.json                 # Configuración TypeScript
+└── 📄 README.md                     # Este archivo
+```
 
-1. Usando npm:
-bash
+## 🚀 Instalación
+
+### Prerrequisitos
+
+- **Node.js** (v20 o superior)
+- **pnpm** (gestor de paquetes)
+- **Base de datos** (MySQL/PostgreSQL)
+- **Cuenta en Cloudinary** (para almacenamiento de archivos)
+
+### 1. Clonar el Repositorio
+
+```bash
+git clone <url-del-repositorio>
+cd backend-ruta593-develop
+```
+
+### 2. Instalar pnpm (si no está instalado)
+
+```bash
+# Usando npm
 npm install -g pnpm
 
-
-2. Usando Windows PowerShell:
-bash
+# Usando PowerShell (Windows)
 iwr https://get.pnpm.io/install.ps1 -useb | iex
 
-
-3. Verificar la instalación:
-bash
+# Verificar instalación
 pnpm --version
+```
 
+### 3. Instalar Dependencias
 
-## Instalación 
-
-1. Clona el repositorio:
-bash
-git clone <https://github.com/ArielTonato/buses-back>
-
-
-2. Instala las dependencias:
-bash
+```bash
 pnpm install
+```
 
+### 4. Configurar Variables de Entorno
 
-3. Configura las variables de entorno:
-Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+Crear un archivo `.env` en la raíz del proyecto:
 
-```properties
-# Database Configuration
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=tu_contraseña
-MYSQL_DATABASE=bd_buses
+```env
+# Configuración de Base de Datos
+DB_TYPE=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=tu_usuario
+DB_PASSWORD=tu_contraseña
+DB_NAME=bd_buses
+DB_SCHEMA=public
 
-# JWT Configuration
-JWT_SECRET=tu_clave_secreta_jwt
+# Configuración JWT
+JWT_SECRET=tu_clave_secreta_jwt_super_segura
 
-# Mail Configuration
+# Configuración de Email
 MAIL_HOST=smtp.gmail.com
 MAIL_USER=tu_email@gmail.com
 MAIL_PASSWORD=tu_app_password
 MAIL_FROM=tu_email@gmail.com
 
-# Cloudinary Configuration
+# Configuración Cloudinary
 CLOUDINARY_CLOUD_NAME=tu_cloud_name
 CLOUDINARY_API_KEY=tu_api_key
 CLOUDINARY_API_SECRET=tu_api_secret
+
+# Configuración del Servidor
+PORT=3000
+NODE_ENV=development
 ```
 
-> **Nota**: Asegúrate de reemplazar los valores con tus propias credenciales.
+### 5. Configurar Base de Datos
 
-4. Inicia el servidor de desarrollo:
-bash
+1. Crear la base de datos:
+```sql
+CREATE DATABASE bd_buses;
+```
+
+2. El sistema creará automáticamente las tablas al iniciar (synchronize: true)
+
+## 📦 Dependencias
+
+### Dependencias Principales
+
+| Dependencia | Versión | Descripción |
+|-------------|---------|-------------|
+| `@nestjs/common` | ^10.0.0 | Framework NestJS |
+| `@nestjs/typeorm` | 10.0.2 | ORM para base de datos |
+| `@nestjs/jwt` | 10.2.0 | Autenticación JWT |
+| `@nestjs/swagger` | ^8.1.1 | Documentación API |
+| `typeorm` | 0.3.20 | ORM principal |
+| `mysql2` | 3.11.4 | Driver MySQL |
+| `bcryptjs` | ^2.4.3 | Encriptación de contraseñas |
+| `class-validator` | ^0.14.1 | Validación de datos |
+| `cloudinary` | ^2.5.1 | Almacenamiento en la nube |
+| `nodemailer` | ^6.9.16 | Envío de emails |
+| `pdfkit` | ^0.16.0 | Generación de PDFs |
+| `qrcode` | ^1.5.4 | Generación de códigos QR |
+
+### Dependencias de Desarrollo
+
+| Dependencia | Versión | Descripción |
+|-------------|---------|-------------|
+| `@nestjs/cli` | ^10.0.0 | CLI de NestJS |
+| `@types/node` | ^20.3.1 | Tipos de Node.js |
+| `typescript` | ^5.1.3 | Compilador TypeScript |
+| `prettier` | ^3.0.0 | Formateador de código |
+| `eslint` | ^8.0.0 | Linter de código |
+| `jest` | ^29.5.0 | Framework de pruebas |
+
+## 🏃‍♂️ Ejecución
+
+### Comandos Disponibles
+
+```bash
+# Desarrollo
+pnpm run start:dev          # Servidor con hot reload
+pnpm run start:debug        # Servidor en modo debug
+
+# Producción
+pnpm run build              # Compilar el proyecto
+pnpm run start:prod         # Ejecutar en producción
+pnpm run start              # Ejecutar normalmente
+
+# Formateo y Linting
+pnpm run format             # Formatear código con Prettier
+pnpm run lint               # Ejecutar ESLint
+
+# Pruebas
+pnpm run test               # Ejecutar pruebas unitarias
+pnpm run test:watch         # Pruebas en modo watch
+pnpm run test:cov           # Pruebas con cobertura
+pnpm run test:e2e           # Pruebas end-to-end
+```
+
+### Iniciar el Servidor
+
+```bash
+# Desarrollo (recomendado para desarrollo)
 pnpm run start:dev
 
-
-## Estructura del Proyecto 
-```
-src/
-│
-├── auth/             # Módulo de gestión de autenticación
-├── boletos/          # Módulo de gestión de boletos
-├── buses/            # Módulo de gestión de buses
-├── cloudinary/       # Módulo de gestión para la carga de imágenes y PDFs
-├── cooperativa/      # Módulo de configuración de la cooperativa
-├── factura/          # Módulo de facturación
-├── frecuencias/      # Módulo de gestión de frecuencias
-├── reserva/          # Módulo de reservas
-├── mail/             # Módulo de envío de emails
-├── user/             # Módulo de usuarios
-├── common/           # Utilidades compartidas
-└── app.module.ts     # Módulo principal de la aplicación
+# El servidor estará disponible en: http://localhost:3000
+# Documentación Swagger: http://localhost:3000/api/docs
 ```
 
-## Documentación API 
+## 📚 Documentación API
 
-La documentación de la API está disponible en Swagger. Para acceder:
+Una vez iniciado el servidor, puedes acceder a la documentación interactiva de la API:
 
-1. Inicia el servidor
-2. Visita http://localhost:3000/api/docs o el puerto correspondiente en tu servidor
+- **Swagger UI**: http://localhost:3000/api/docs
+- **Endpoints base**: http://localhost:3000/api
 
-## Endpoints Principales 
+### Endpoints Principales
 
-Revisar la documentación de Swagger para obtener detalles completos de los endpoints.
+- `POST /api/auth/login` - Iniciar sesión
+- `POST /api/auth/register` - Registro de usuarios
+- `GET /api/boletos` - Listar boletos
+- `POST /api/reserva` - Crear reserva
+- `GET /api/buses` - Listar buses
+- `GET /api/rutas` - Listar rutas
 
-- POST /reserva - Crear una nueva reserva
-- GET /boletos - Listar todos los boletos
-- GET /factura - Obtener las facturas
-- GET /cooperativa - Listar cooperativa
+## 🧪 Pruebas
 
-## Módulos Principales 
+El proyecto incluye archivos de prueba en la carpeta `tests/` que pueden ser ejecutados con:
 
-### Módulo de Reservas
-- Gestión de reservas de asientos
-- Estado de reservas (pendiente, confirmada, cancelada)
-- Asignación de asientos
-- Escoger destino
-- Escoger metodo de pago
+- **REST Client** (VS Code extension)
+- **Postman**
+- **Thunder Client**
 
-### Módulo de Boletos
-- Generación de boletos
-- Códigos QR
-- Validación de boletos
+### Ejecutar Pruebas Automatizadas
 
-### Módulo de Facturas
-- Generación automática de facturas
-- Historial de facturas
+```bash
+# Pruebas unitarias
+pnpm run test
 
-### Módulo de Frecuencias
-- Gestión de frecuencias
-- Asignación de buses a frecuencias
-- Asignación de conductores a frecuencias
-- Asignación de horarios a frecuencias
-- Asignación de origen y destino a frecuencias
+# Pruebas con cobertura
+pnpm run test:cov
 
-## Pruebas 
+# Pruebas end-to-end
+pnpm run test:e2e
+```
 
-Para ejecutar las pruebas:
+## 🔧 Configuración Adicional
 
-Las pruebas se realizaron Rest Client y Postman, para ver los tests revisar la carpeta tests
+### Prettier
 
+El proyecto incluye configuración de Prettier en `.prettierrc`:
 
-## Tecnologías Utilizadas 
+```json
+{
+  "singleQuote": true,
+  "trailingComma": "all"
+}
+```
 
-- [Node.js](https://nodejs.org/) - Entorno de ejecución
-- [NestJS](https://nestjs.com/) - Framework de backend
-- [MySQL](https://www.mysql.com/) - Base de datos
-- [TypeORM](https://typeorm.io/) - ORM
-- [Swagger](https://swagger.io/) - Documentación API
+### TypeScript
 
-## Autores 
+Configuración optimizada para NestJS en `tsconfig.json` y `tsconfig.build.json`.
 
-* *Ariel Tonato* - Desarrollo - [ArielTonato](https://github.com/ArielTonato)
+## 🤝 Contribución
 
-## Licencia 📄
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
-Este proyecto es software libre y de código abierto, distribuido bajo la Licencia MIT. Esto significa que puedes:
+## 📄 Licencia
 
-- ✔️ Usar el código para proyectos comerciales
-- ✔️ Modificar el código según tus necesidades
-- ✔️ Distribuir el código modificado
-- ✔️ Uso privado sin restricciones
+Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
 
-La única condición es mantener el aviso de copyright y la licencia en todas las copias o partes sustanciales del software.
+## 👨‍💻 Autores
 
-Para más detalles, consulta el archivo [LICENSE](LICENSE) en el repositorio.
+**Carlos Alvarado - Marco Montesdeoca** - [GitHub](https://github.com/CarlosAl21/backend-ruta593)
 
-## Agradecimientos 
+## 🙏 Agradecimientos
 
-* Universidad Técnica de Ambato
-* Docente del proyecto
+- Universidad Técnica de Ambato
+- Docentes del proyecto
+- Comunidad NestJS
+
+---
+
+⭐ Si este proyecto te ha sido útil, ¡dale una estrella al repositorio!
