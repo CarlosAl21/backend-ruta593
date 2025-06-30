@@ -37,11 +37,11 @@ export class BoletosService {
 
     // Generar datos para el QR, incluyendo el array de IDs de asientos
     const qrData = {
+      boleto_id: boletoGuardado.boleto_id,
       total: boletoGuardado.total,
       cantidad_asientos: boletoGuardado.cantidad_asientos,
       estado: boletoGuardado.estado,
-      asientos: boletoGuardado.asientos,
-      asiento_ids: asientoIds
+      asientos: asientoIds, // Array de IDs de asientos
     };
 
     // Generar QR como Buffer
