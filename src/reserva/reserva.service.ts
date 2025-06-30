@@ -589,6 +589,20 @@ export class ReservaService {
     const boletoGuardado = await this.boletoRepository.save(boleto);
 
     // Ahora que tenemos el boleto_id, podrías actualizar el QR si lo necesitas con el id real
+    // Generar nuevo QR con el boleto_id real y los asientos
+    const qrDataActualizado = {
+      boleto_id: boletoGuardado.boleto_id,
+      total: boletoGuardado.total,
+      cantidad_asientos: boletoGuardado.cantidad_asientos,
+      estado: boletoGuardado.estado,
+      asientos: asientosArray
+    };
+
+    const qrBufferActualizado = await QRCode.toBuffer(JSON.stringify(qrDataActualizado));
+    const uploadResultActualizado = await this.cloudinaryService.uploadBuffer(qrBufferActualizado, 'boletos');
+
+    // Actualizar la URL del QR en el boleto con el id real
+    boletoGuardado.url_imagen_qr = uploadResultActualizado.secure_url;
 
     return boletoGuardado;
   }
