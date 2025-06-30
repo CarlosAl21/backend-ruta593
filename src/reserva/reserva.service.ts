@@ -21,6 +21,7 @@ import { ViajesService } from 'src/viajes/viajes.service';
 import { DescuentosService } from 'src/descuentos/descuentos.service';
 
 interface QRCodeData {
+  boleto_id?: string; // Hacemos opcional el ID del boleto
   total: number;
   cantidad_asientos: number;
   estado: EstadoBoleto;
@@ -214,7 +215,8 @@ export class ReservaService {
             boleto.asientos = asientosArray.join(',');
 
             // Generar nuevo QR con los datos actualizados
-            const qrData = {
+            const qrData: QRCodeData = {
+              boleto_id: boleto.boleto_id,
               total: boleto.total,
               cantidad_asientos: boleto.cantidad_asientos,
               estado: boleto.estado,
@@ -368,6 +370,7 @@ export class ReservaService {
     );
 
     return {
+      boleto_id: boleto.boleto_id, // Añadimos el ID del boleto al QR
       cantidad_asientos: boleto.asientos.split(',').length,
       total: boleto.total,
       estado: hayReservaPorDeposito ? EstadoBoleto.PENDIENTE : EstadoBoleto.PAGADO,
@@ -378,6 +381,13 @@ export class ReservaService {
   }
 
   private async generarYSubirQR(qrData: QRCodeData) {
+    console.log('Generando QR con los siguientes datos para subir:', {
+      boleto_id: qrData.boleto_id || 'No definido',
+      total: qrData.total,
+      cantidad_asientos: qrData.cantidad_asientos,
+      estado: qrData.estado,
+      asientos: qrData.asientos
+    });
     const qrBuffer = await QRCode.toBuffer(JSON.stringify(qrData));
     return this.cloudinaryService.uploadBuffer(qrBuffer, 'boletos');
   }
@@ -567,12 +577,12 @@ export class ReservaService {
     };
 
     // Generar datos para el QR
-    const qrData = {
+    const qrData: QRCodeData = {
       boleto_id: undefined, // Se asignará después de guardar
       total: boletoTemp.total,
       cantidad_asientos: boletoTemp.cantidad_asientos,
       estado: boletoTemp.estado,
-      asientos: asientosArray
+      asientos: asientosArray.join(',')
     };
 
     const qrBuffer = await QRCode.toBuffer(JSON.stringify(qrData));
@@ -588,14 +598,14 @@ export class ReservaService {
 
     const boletoGuardado = await this.boletoRepository.save(boleto);
 
-    // Ahora que tenemos el boleto_id, podrías actualizar el QR si lo necesitas con el id real
+    // Ahora que tenemos el boleto_id, actualizar el QR con el id real
     // Generar nuevo QR con el boleto_id real y los asientos
-    const qrDataActualizado = {
+    const qrDataActualizado: QRCodeData = {
       boleto_id: boletoGuardado.boleto_id,
       total: boletoGuardado.total,
       cantidad_asientos: boletoGuardado.cantidad_asientos,
       estado: boletoGuardado.estado,
-      asientos: asientosArray
+      asientos: asientosArray.join(',')
     };
 
     const qrBufferActualizado = await QRCode.toBuffer(JSON.stringify(qrDataActualizado));
