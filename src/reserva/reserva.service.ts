@@ -553,12 +553,27 @@ export class ReservaService {
 
   private async crearNuevoBoleto(reserva: Reserva): Promise<Boleto> {
     const asiento = await this.findAsientoById(reserva.asiento_id);
-    const qrData = await this.generarQRData({
+
+    // El array de asientos debe ser un array de números (aunque sea uno solo)
+    const asientosArray = [asiento.numero_asiento];
+
+    // El boleto aún no existe, así que creamos uno temporal para el QR
+    const boletoTemp = {
+      boleto_id: undefined, // Se asignará después de guardar
       total: reserva.precio,
       cantidad_asientos: 1,
-      asientos: asiento.numero_asiento.toString(),
-      reservas: [reserva]
-    } as Boleto, asiento.numero_asiento.toString(), reserva.metodo_pago === MetodoPago.DEPOSITO);
+      estado: reserva.metodo_pago === MetodoPago.DEPOSITO ? EstadoBoleto.PENDIENTE : EstadoBoleto.PAGADO,
+      asientos: asientosArray
+    };
+
+    // Generar datos para el QR
+    const qrData = {
+      boleto_id: undefined, // Se asignará después de guardar
+      total: boletoTemp.total,
+      cantidad_asientos: boletoTemp.cantidad_asientos,
+      estado: boletoTemp.estado,
+      asientos: asientosArray
+    };
 
     const qrBuffer = await QRCode.toBuffer(JSON.stringify(qrData));
     const uploadResult = await this.cloudinaryService.uploadBuffer(qrBuffer, 'boletos');
@@ -566,12 +581,16 @@ export class ReservaService {
     const boleto = this.boletoRepository.create({
       total: reserva.precio,
       cantidad_asientos: 1,
-      estado: reserva.metodo_pago === MetodoPago.DEPOSITO ? EstadoBoleto.PENDIENTE : EstadoBoleto.PAGADO,
-      asientos: asiento.numero_asiento.toString(),
+      estado: boletoTemp.estado,
+      asientos: asientosArray.join(','), // Guardar como string en la entidad
       url_imagen_qr: uploadResult.secure_url,
     });
 
-    return this.boletoRepository.save(boleto);
+    const boletoGuardado = await this.boletoRepository.save(boleto);
+
+    // Ahora que tenemos el boleto_id, podrías actualizar el QR si lo necesitas con el id real
+
+    return boletoGuardado;
   }
 
   private async handleFacturaCreation(reserva: Reserva): Promise<void> {

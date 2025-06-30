@@ -149,18 +149,16 @@ export class ComprobantesPagosService {
     // Actualizar estado del boleto
     boleto.estado = EstadoBoleto.PAGADO;
 
-    // Obtener los números de asientos
-    const numerosAsientos = boleto.reservas
-      .map(reserva => reserva.asiento.numero_asiento)
-      .sort((a, b) => a - b)
-      .join(',');
+    // Obtener los IDs de los asientos
+    const asientoIds = boleto.reservas.map(reserva => reserva.asiento?.asiento_id).filter(Boolean);
 
-    // Generar nuevo QR con estado actualizado
+    // Generar nuevo QR con estado actualizado, id del boleto y array de asientos
     const qrData = {
+      boleto_id: boleto.boleto_id,
       total: boleto.reservas.reduce((sum, reserva) => sum + reserva.precio, 0),
       cantidad_asientos: boleto.reservas.length,
       estado: EstadoBoleto.PAGADO,
-      asientos: numerosAsientos,
+      asientos: asientoIds, // <-- array de ids de asientos
       mensaje: 'VÁLIDO - PAGO CONFIRMADO'
     };
 
