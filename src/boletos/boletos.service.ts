@@ -121,8 +121,48 @@ export class BoletosService {
     return boleto;
   }
 
-  update(uid: string, updateBoletoDto: UpdateBoletoDto) {
-    return `This action updates a #${uid} boleto`;
+  async update(uid: string, updateBoletoDto: UpdateBoletoDto) {
+    const boleto = await this.boletoRepository.findOne({
+      where: { boleto_id: uid },
+      relations: ['reservas', 'reservas.asiento']
+    });
+    if (!boleto) {
+      throw new NotFoundException(`Boleto con UID ${uid} no encontrado`);
+    }
+
+    // Guardar valores previos para comparar si es necesario actualizar el QR
+    const camposQR = ['total', 'cantidad_asientos', 'estado', 'asientos'];
+    let requiereActualizarQR = false;
+    for (const campo of camposQR) {
+      if (updateBoletoDto[campo] !== undefined && updateBoletoDto[campo] !== boleto[campo]) {
+        requiereActualizarQR = true;
+        break;
+      }
+    }
+
+    // Actualizar los campos del boleto
+    Object.assign(boleto, updateBoletoDto);
+
+    // Si cambian campos relevantes, regenerar el QR
+    if (requiereActualizarQR) {
+      // Si asientos es string, lo dejamos así, si es array, lo convertimos
+      let asientosQR = boleto.asientos;
+      if (Array.isArray(asientosQR)) {
+        asientosQR = asientosQR.join(',');
+      }
+      const qrData = {
+        boleto_id: boleto.boleto_id,
+        total: boleto.total,
+        cantidad_asientos: boleto.cantidad_asientos,
+        estado: boleto.estado,
+        asientos: asientosQR
+      };
+      const qrBuffer = await QRCode.toBuffer(JSON.stringify(qrData));
+      const uploadResult = await this.cloudinaryService.uploadBuffer(qrBuffer, 'boletos');
+      boleto.url_imagen_qr = uploadResult.secure_url;
+    }
+
+    return this.boletoRepository.save(boleto);
   }
 
   async remove(uid: string) {
