@@ -122,28 +122,47 @@ export class BoletosService {
   }
 
   async update(uid: string, updateBoletoDto: UpdateBoletoDto) {
-    try {
-      const boleto = await this.boletoRepository.findOneOrFail({
-        where: { boleto_id: uid },
-        relations: ['reservas', 'reservas.asiento']
-      });
-      const updatedBoleto = this.boletoRepository.merge(boleto, updateBoletoDto);
-      const savedBoleto = await this.boletoRepository.save(updatedBoleto);
-      // Generar nuevo QR con los datos actualizados
+    const boleto = await this.boletoRepository.findOne({
+      where: { boleto_id: uid },
+      relations: ['reservas', 'reservas.asiento']
+    });
+    if (!boleto) {
+      throw new NotFoundException(`Boleto con UID ${uid} no encontrado`);
+    }
+
+    // Guardar valores previos para comparar si es necesario actualizar el QR
+    const camposQR = ['total', 'cantidad_asientos', 'estado', 'asientos'];
+    let requiereActualizarQR = false;
+    for (const campo of camposQR) {
+      if (updateBoletoDto[campo] !== undefined && updateBoletoDto[campo] !== boleto[campo]) {
+        requiereActualizarQR = true;
+        break;
+      }
+    }
+
+    // Actualizar los campos del boleto
+    Object.assign(boleto, updateBoletoDto);
+
+    // Si cambian campos relevantes, regenerar el QR
+    if (requiereActualizarQR) {
+      // Si asientos es string, lo dejamos así, si es array, lo convertimos
+      let asientosQR = boleto.asientos;
+      if (Array.isArray(asientosQR)) {
+        asientosQR = asientosQR.join(',');
+      }
       const qrData = {
-        boleto_id: savedBoleto.boleto_id,
-        total: savedBoleto.total,
-        cantidad_asientos: savedBoleto.cantidad_asientos,
-        estado: savedBoleto.estado,
-        asientos: savedBoleto.asientos.split(',').map(Number) // Convertir a array de números
+        boleto_id: boleto.boleto_id,
+        total: boleto.total,
+        cantidad_asientos: boleto.cantidad_asientos,
+        estado: boleto.estado,
+        asientos: asientosQR
       };
       const qrBuffer = await QRCode.toBuffer(JSON.stringify(qrData));
       const uploadResult = await this.cloudinaryService.uploadBuffer(qrBuffer, 'boletos');
-      savedBoleto.url_imagen_qr = uploadResult.secure_url;
-      return this.boletoRepository.save(savedBoleto);
-    } catch (error) {
-      throw new NotFoundException(`Boleto con UID ${uid} no encontrado`);
+      boleto.url_imagen_qr = uploadResult.secure_url;
     }
+
+    return this.boletoRepository.save(boleto);
   }
 
   async remove(uid: string) {
