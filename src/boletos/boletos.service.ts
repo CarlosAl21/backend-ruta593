@@ -121,8 +121,29 @@ export class BoletosService {
     return boleto;
   }
 
-  update(uid: string, updateBoletoDto: UpdateBoletoDto) {
-    return `This action updates a #${uid} boleto`;
+  async update(uid: string, updateBoletoDto: UpdateBoletoDto) {
+    try {
+      const boleto = await this.boletoRepository.findOneOrFail({
+        where: { boleto_id: uid },
+        relations: ['reservas', 'reservas.asiento']
+      });
+      const updatedBoleto = this.boletoRepository.merge(boleto, updateBoletoDto);
+      const savedBoleto = await this.boletoRepository.save(updatedBoleto);
+      // Generar nuevo QR con los datos actualizados
+      const qrData = {
+        boleto_id: savedBoleto.boleto_id,
+        total: savedBoleto.total,
+        cantidad_asientos: savedBoleto.cantidad_asientos,
+        estado: savedBoleto.estado,
+        asientos: savedBoleto.asientos.split(',').map(Number) // Convertir a array de números
+      };
+      const qrBuffer = await QRCode.toBuffer(JSON.stringify(qrData));
+      const uploadResult = await this.cloudinaryService.uploadBuffer(qrBuffer, 'boletos');
+      savedBoleto.url_imagen_qr = uploadResult.secure_url;
+      return this.boletoRepository.save(savedBoleto);
+    } catch (error) {
+      throw new NotFoundException(`Boleto con UID ${uid} no encontrado`);
+    }
   }
 
   async remove(uid: string) {
